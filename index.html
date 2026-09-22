@@ -1,0 +1,1940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Root Cause Analysis Report — License Plate Service Section</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF1F5; --bg-alt:#E7EBF1; --panel:#FFFFFF; --panel-2:#F6F8FB;
+  --border:#E3E8EF; --border-soft:#ECF0F5;
+  --text:#1A2230; --text-dim:#5B6472; --text-mute:#8A93A3;
+  --brand:#149463; --brand-strong:#0E7A50; --brand-soft:#E1F5EC; --brand-glow:rgba(20,148,99,0.10);
+  --amber:#DB9A2C; --amber-soft:#FBF1DC;
+  --red:#DD534A; --red-soft:#FBE7E5;
+  --blue:#3568D4; --blue-soft:#E7EDFC;
+  --purple:#7856CE; --purple-soft:#EFE8FB;
+  --shadow: 0 1px 2px rgba(20,30,45,0.05), 0 6px 20px -8px rgba(20,30,45,0.10);
+  --shadow-sm: 0 1px 2px rgba(20,30,45,0.06);
+  --radius:16px; --radius-sm:11px;
+  color-scheme: light;
+}
+:root[data-theme="dark"]{
+  --bg:#10151B; --bg-alt:#141A21; --panel:#1B2229; --panel-2:#212A32;
+  --border:#2B333D; --border-soft:#242C35;
+  --text:#EAEDEF; --text-dim:#AEB7C0; --text-mute:#7C8794;
+  --brand:#38C889; --brand-strong:#2FA876; --brand-soft:#173328; --brand-glow:rgba(56,200,137,0.14);
+  --amber:#E8AC4C; --amber-soft:#3A2E17;
+  --red:#EB6D63; --red-soft:#3B211E;
+  --blue:#6C9BF2; --blue-soft:#1B2A44;
+  --purple:#A084EA; --purple-soft:#271F3E;
+  --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 10px 30px -10px rgba(0,0,0,0.5);
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.35);
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#10151B; --bg-alt:#141A21; --panel:#1B2229; --panel-2:#212A32;
+    --border:#2B333D; --border-soft:#242C35;
+    --text:#EAEDEF; --text-dim:#AEB7C0; --text-mute:#7C8794;
+    --brand:#38C889; --brand-strong:#2FA876; --brand-soft:#173328; --brand-glow:rgba(56,200,137,0.14);
+    --amber:#E8AC4C; --amber-soft:#3A2E17;
+    --red:#EB6D63; --red-soft:#3B211E;
+    --blue:#6C9BF2; --blue-soft:#1B2A44;
+    --purple:#A084EA; --purple-soft:#271F3E;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 10px 30px -10px rgba(0,0,0,0.5);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.35);
+    color-scheme: dark;
+  }
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:
+    radial-gradient(1100px 520px at 6% -12%, var(--brand-glow), transparent 60%),
+    var(--bg);
+  color:var(--text);
+  font-family:"Inter","Noto Sans Thai",sans-serif;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+  padding-bottom:60px;
+}
+.num{ font-family:"Space Grotesk","Inter",sans-serif; font-variant-numeric: tabular-nums; }
+a{color:inherit;}
+::-webkit-scrollbar{height:8px; width:8px;}
+::-webkit-scrollbar-thumb{background:var(--border); border-radius:8px;}
+
+/* ---------- Header ---------- */
+.topbar{
+  border-bottom:1px solid var(--border-soft);
+  background:linear-gradient(180deg, var(--panel), transparent);
+  position:sticky; top:0; z-index:40;
+  backdrop-filter: blur(10px);
+}
+.topbar-inner{
+  max-width:1400px;margin:0 auto;padding:18px 28px;
+  display:flex; align-items:flex-start; justify-content:space-between; gap:20px; flex-wrap:wrap;
+}
+.brandmark{display:flex; gap:14px; align-items:flex-start;}
+.brandmark .glyph{
+  width:44px;height:44px;border-radius:12px;flex:none;
+  background:linear-gradient(150deg, var(--brand), var(--brand-strong));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 6px 16px rgba(20,148,99,0.28);
+}
+.brandmark .glyph svg{width:23px;height:23px;}
+.titleblock h1{ margin:0; font-family:"Space Grotesk",sans-serif; font-weight:600; font-size:20px; letter-spacing:0.1px; color:var(--text); }
+.titleblock p{margin:3px 0 0; font-size:13px; color:var(--text-mute);}
+
+.header-actions{display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+.icon-btn{
+  position:relative; width:38px; height:38px; border-radius:10px; border:1px solid var(--border);
+  background:var(--panel); color:var(--text-dim); display:flex; align-items:center; justify-content:center;
+  cursor:pointer; box-shadow:var(--shadow-sm);
+}
+.icon-btn:hover{ color:var(--text); border-color:var(--text-mute); }
+.icon-btn svg{width:17px;height:17px;}
+.icon-badge{
+  position:absolute; top:-5px; right:-5px; min-width:16px; height:16px; padding:0 4px; border-radius:100px;
+  background:var(--red); color:#fff; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center;
+  border:2px solid var(--bg); font-family:"Space Grotesk",sans-serif;
+}
+.period-chip{
+  display:flex; align-items:center; gap:7px; font-size:12.5px; color:var(--text-dim);
+  border:1px solid var(--border); padding:8px 13px; border-radius:10px; white-space:nowrap; background:var(--panel);
+  box-shadow:var(--shadow-sm);
+}
+.period-chip svg{width:14px;height:14px; color:var(--text-mute); flex:none;}
+.period-chip b{color:var(--text); font-weight:600;}
+.btn{
+  font-family:inherit; font-size:12.8px; font-weight:600; padding:9px 15px; border-radius:10px;
+  border:1px solid var(--border); background:var(--panel); color:var(--text); cursor:pointer;
+  display:inline-flex; align-items:center; gap:7px; white-space:nowrap; box-shadow:var(--shadow-sm);
+}
+.btn:hover{border-color:var(--brand); }
+.btn.primary{background:var(--brand); border-color:var(--brand); color:#fff;}
+.btn.primary:hover{background:var(--brand-strong); border-color:var(--brand-strong);}
+.btn svg{width:14px;height:14px;}
+.btn.spin svg{animation:spin .7s linear;}
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.hidden-input{display:none;}
+
+.menu-wrap{position:relative;}
+.menu-dropdown{
+  position:absolute; top:calc(100% + 8px); right:0; background:var(--panel); border:1px solid var(--border);
+  border-radius:12px; box-shadow:var(--shadow); padding:6px; min-width:220px; z-index:60; display:none;
+}
+.menu-dropdown.open{display:block;}
+.menu-item{
+  display:flex; align-items:center; gap:9px; width:100%; text-align:left; font-family:inherit; font-size:12.8px;
+  padding:9px 10px; border-radius:8px; border:none; background:none; color:var(--text); cursor:pointer;
+}
+.menu-item:hover{background:var(--panel-2);}
+.menu-item svg{width:15px;height:15px; color:var(--text-mute); flex:none;}
+.menu-hint{font-size:11px; color:var(--text-mute); padding:6px 10px 4px; border-top:1px solid var(--border-soft); margin-top:4px;}
+
+/* ---------- Layout ---------- */
+.wrap{max-width:1400px;margin:0 auto;padding:24px 28px 0;}
+.section-head{display:flex; align-items:baseline; justify-content:space-between; margin:40px 0 14px; gap:12px; flex-wrap:wrap;}
+.section-head h2{margin:0; font-size:15.5px; font-weight:600; font-family:"Space Grotesk",sans-serif;}
+.section-head .sub{font-size:12.5px; color:var(--text-mute);}
+
+.panel{ background:var(--panel); border:1px solid var(--border-soft); border-radius:var(--radius); padding:18px 20px 20px; box-shadow:var(--shadow-sm); }
+.panel-head{display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:6px;}
+.panel-head h3{margin:0; font-size:14px; font-weight:600; font-family:"Space Grotesk",sans-serif;}
+.panel-head .panel-sub{font-size:11.8px; color:var(--text-mute); margin-top:2px;}
+
+/* ---------- Overview row ---------- */
+.overview-grid{display:grid; grid-template-columns: 0.92fr 1.55fr 1.05fr; gap:16px; }
+@media (max-width:1150px){ .overview-grid{grid-template-columns:1fr 1fr;} .overview-grid .insights-panel{grid-column:1/-1;} }
+@media (max-width:720px){ .overview-grid{grid-template-columns:1fr;} .overview-grid .insights-panel{grid-column:auto;} }
+
+.trend-pill{
+  font-size:10.5px; font-weight:700; padding:3px 9px; border-radius:100px; display:inline-flex; align-items:center; gap:4px;
+  white-space:nowrap;
+}
+.trend-pill.up{background:var(--brand-soft); color:var(--brand-strong);}
+.trend-pill.down{background:var(--red-soft); color:var(--red);}
+.trend-pill svg{width:9px;height:9px;}
+
+/* gauge (ring) panel */
+.gauge-panel{display:flex; flex-direction:column; align-items:center;}
+.gauge-panel .panel-head{width:100%;}
+.gauge-wrap{position:relative; width:180px; height:180px; margin:6px 0 4px;}
+.gauge-wrap > div:first-child{position:absolute; inset:0;}
+.gauge-wrap svg{width:100%; height:100%; transform:rotate(0deg);}
+.gauge-center{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+.gauge-center .gv{font-size:34px; font-weight:700; line-height:1; color:var(--text);}
+.gauge-center .gl{font-size:11px; color:var(--text-mute); margin-top:4px;}
+.gauge-legend{display:flex; gap:18px; margin-top:10px; flex-wrap:wrap; justify-content:center;}
+.legend-item{display:flex; align-items:center; gap:6px; font-size:11.8px; color:var(--text-dim);}
+.legend-dot{width:8px;height:8px;border-radius:50%; flex:none;}
+
+/* trend panel */
+.trend-panel .panel-head{align-items:center;}
+.seg{display:flex; background:var(--panel-2); border:1px solid var(--border); border-radius:9px; padding:3px; gap:2px;}
+.seg button{
+  font-family:inherit; font-size:11.6px; font-weight:600; border:none; background:none; color:var(--text-mute);
+  padding:5px 12px; border-radius:6px; cursor:pointer;
+}
+.seg button.active{background:var(--blue); color:#fff;}
+.trend-legend{display:flex; gap:14px; flex-wrap:wrap; margin:2px 0 10px;}
+.trend-legend .legend-item{font-size:11.5px;}
+
+/* insights panel */
+.insight-list{display:flex; flex-direction:column; gap:3px; margin-top:4px;}
+.insight-item{
+  display:flex; align-items:flex-start; gap:10px; padding:10px 6px; border-bottom:1px solid var(--border-soft);
+}
+.insight-item:last-child{border-bottom:none;}
+.insight-icon{
+  width:24px;height:24px;border-radius:7px; flex:none; display:flex; align-items:center; justify-content:center; margin-top:1px;
+}
+.insight-icon svg{width:12px;height:12px;}
+.insight-icon.up{background:var(--brand-soft); color:var(--brand-strong);}
+.insight-icon.down{background:var(--red-soft); color:var(--red);}
+.insight-icon.flat{background:var(--panel-2); color:var(--text-mute);}
+.insight-body{flex:1; min-width:0;}
+.insight-title{font-size:12.6px; font-weight:600; color:var(--text); line-height:1.35;}
+.insight-meta{display:flex; align-items:center; gap:6px; margin-top:3px;}
+.insight-meta .tag{font-size:10.8px; color:var(--text-mute);}
+.insight-meta .delta{font-size:10.8px; font-weight:700;}
+.insight-meta .delta.up{color:var(--brand-strong);}
+.insight-meta .delta.down{color:var(--red);}
+
+/* ---------- Filters ---------- */
+.filterbar{
+  display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:4px;
+}
+.filter-label{font-size:11.5px; color:var(--text-mute); margin-right:2px; white-space:nowrap;}
+.select{
+  font-family:inherit; font-size:12.8px; color:var(--text); background:var(--panel);
+  border:1px solid var(--border); border-radius:100px; padding:7px 30px 7px 13px;
+  cursor:pointer; appearance:none; -webkit-appearance:none;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%238A93A3'/></svg>");
+  background-repeat:no-repeat; background-position:right 12px center;
+  min-width:210px; box-shadow:var(--shadow-sm);
+}
+.select:focus{outline:none; border-color:var(--blue);}
+.date-input{
+  font-family:inherit; font-size:12.6px; color:var(--text); background:var(--panel);
+  border:1px solid var(--border); border-radius:100px; padding:6px 12px; box-shadow:var(--shadow-sm);
+}
+.date-sep{font-size:12px; color:var(--text-mute);}
+.chip{
+  border:1px solid var(--border); background:var(--panel);
+  color:var(--text-dim); font-size:12.6px; padding:6px 13px; border-radius:100px;
+  cursor:pointer; transition: all .15s ease; user-select:none; font-family:inherit; box-shadow:var(--shadow-sm);
+}
+.chip:hover{border-color:var(--text-mute); color:var(--text);}
+.chip.active{ background:var(--brand-soft); border-color:var(--brand); color:var(--brand-strong); }
+.chip.active.pri-high{background:var(--red-soft); border-color:var(--red); color:var(--red);}
+.chip.active.pri-medium{background:var(--amber-soft); border-color:var(--amber); color:#8a5c0c;}
+.chip.active.pri-low{background:var(--brand-soft); border-color:var(--brand); color:var(--brand-strong);}
+.chip.active.st-open{background:var(--amber-soft); border-color:var(--amber); color:#8a5c0c;}
+.chip-reset{
+  margin-left:auto; font-size:12.3px; color:var(--text-mute); background:none; border:none;
+  cursor:pointer; text-decoration:underline; text-underline-offset:3px; font-family:inherit; padding:6px 4px;
+}
+.chip-reset:hover{color:var(--text);}
+
+/* ---------- Machine scroll cards ---------- */
+.machine-scroll{
+  display:flex; gap:14px; overflow-x:auto; padding:4px 2px 14px; scroll-snap-type:x proximity;
+}
+.machine-card{
+  flex:none; width:212px; scroll-snap-align:start;
+  background:var(--panel); border:1px solid var(--border-soft); border-top:4px solid var(--card-accent, var(--brand));
+  border-radius:14px; padding:14px 14px 16px; box-shadow:var(--shadow-sm); cursor:pointer;
+  transition:border-color .15s ease, box-shadow .15s ease;
+}
+.machine-card:hover{box-shadow:var(--shadow);}
+.machine-card.is-active{border-color:var(--blue); box-shadow:0 0 0 2px var(--blue-soft);}
+.machine-card-head{display:flex; align-items:flex-start; justify-content:space-between; gap:6px;}
+.machine-name{font-size:12.4px; font-weight:600; color:var(--text); line-height:1.3; max-width:150px;}
+.machine-dots{color:var(--text-mute); font-size:15px; line-height:1; flex:none;}
+.machine-gauge{position:relative; width:118px; height:104px; margin:8px auto 2px;}
+.machine-gauge svg{width:100%; height:100%;}
+.machine-gauge-center{position:absolute; left:0; right:0; top:40%; transform:translateY(-50%); text-align:center;}
+.machine-gauge-center .mv{font-size:22px; font-weight:700; color:var(--text);}
+.machine-trend{text-align:center; font-size:11.3px; font-weight:600; margin-top:2px; display:flex; align-items:center; justify-content:center; gap:4px;}
+.machine-trend.up{color:var(--brand-strong);}
+.machine-trend.down{color:var(--red);}
+.machine-trend svg{width:10px;height:10px;}
+.machine-legend{display:flex; justify-content:center; gap:12px; margin-top:9px; padding-top:9px; border-top:1px solid var(--border-soft);}
+.machine-legend .legend-item{font-size:10.8px;}
+
+/* ---------- Breakdown / detail grid ---------- */
+.grid-2{display:grid; grid-template-columns:1.3fr 1fr; gap:16px;}
+.grid-4{display:grid; grid-template-columns:repeat(2,1fr); gap:16px;}
+@media (max-width:900px){ .grid-2, .grid-4{grid-template-columns:1fr;} }
+.chart-box{position:relative; width:100%;}
+
+/* ---------- Table ---------- */
+.table-tools{display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap; align-items:center;}
+.search-input{
+  background:var(--panel-2); border:1px solid var(--border); border-radius:9px;
+  padding:9px 13px; font-size:13px; color:var(--text); font-family:inherit; min-width:250px; flex:1;
+}
+.search-input:focus{outline:none; border-color:var(--blue);}
+.search-input::placeholder{color:var(--text-mute);}
+.count-tag{font-size:12px; color:var(--text-mute); white-space:nowrap;}
+table{width:100%; border-collapse:collapse; font-size:12.6px;}
+thead th{
+  text-align:left; padding:9px 10px; color:var(--text-mute); font-weight:600;
+  border-bottom:1px solid var(--border); font-size:11.2px; cursor:pointer; white-space:nowrap;
+}
+thead th:hover{color:var(--text);}
+tbody td{padding:10px 10px; border-bottom:1px solid var(--border-soft); vertical-align:top;}
+tbody tr:hover{background:var(--panel-2);}
+.wo-code{font-family:"Space Grotesk",sans-serif; color:var(--text-dim); font-size:12px;}
+.desc-cell{max-width:260px; color:var(--text-dim);}
+.table-scroll{overflow-x:auto; margin:0 -2px;}
+.empty-row td{text-align:center; color:var(--text-mute); padding:26px 10px;}
+.badge{ font-size:10.5px; font-weight:700; padding:2px 7px; border-radius:100px; flex:none; letter-spacing:0.3px; white-space:nowrap;}
+.badge.high{background:var(--red-soft); color:var(--red);}
+.badge.medium{background:var(--amber-soft); color:#8a5c0c;}
+.badge.low{background:var(--brand-soft); color:var(--brand-strong);}
+.badge.st-complete{background:var(--brand-soft); color:var(--brand-strong);}
+.badge.st-open{background:var(--amber-soft); color:#8a5c0c;}
+
+footer{max-width:1400px; margin:44px auto 0; padding:16px 28px 0; border-top:1px solid var(--border-soft);
+  color:var(--text-mute); font-size:11.5px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px;}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brandmark">
+      <div class="glyph">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="6" width="18" height="12" rx="2" stroke="#fff" stroke-width="1.6"/>
+          <path d="M7 9.5H10M7 14.5H9" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+          <path d="M13 9.5L15.2 14.5M17.4 9.5L15.2 14.5" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="titleblock">
+        <h1>Root Cause Analysis Report</h1>
+        <p>License Plate Service Section · Department of Land Transport (DLT)</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="icon-btn" id="bellBtn" title="Open work orders">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 3a5 5 0 0 0-5 5v3.2c0 .5-.16 1-.46 1.4L5 15h14l-1.54-2.4a2.4 2.4 0 0 1-.46-1.4V8a5 5 0 0 0-5-5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.5 18a2.5 2.5 0 0 0 5 0" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span class="icon-badge" id="bellBadge">0</span>
+      </button>
+      <div class="period-chip">
+        <svg viewBox="0 0 24 24" fill="none"><rect x="3.5" y="5" width="17" height="15" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 9.5h17M8 3v3.4M16 3v3.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        <span>As of <b id="periodLabel">–</b> · <b id="periodCount">–</b> records</span>
+      </div>
+      <button class="btn primary" id="refreshBtn">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 0 1 14-5.2M20 12a8 8 0 0 1-14 5.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M18 4v4h-4M6 20v-4h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Refresh Data
+      </button>
+      <div class="menu-wrap">
+        <button class="icon-btn" id="menuBtn" title="More">
+          <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="5.5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="18.5" r="1.6" fill="currentColor"/></svg>
+        </button>
+        <div class="menu-dropdown" id="menuDropdown">
+          <button class="menu-item" id="syncSheetBtn">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 0 1 14-5.2M20 12a8 8 0 0 1-14 5.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M18 4v4h-4M6 20v-4h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Sync from Google Sheet
+          </button>
+          <button class="menu-item" id="importBtn">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M12 4v11m0 0 4-4m-4 4-4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 17v2a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            Import Excel File
+          </button>
+          <button class="menu-item" id="resetDataBtn">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 0 1 14-5.2M20 12a8 8 0 0 1-14 5.2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M18 4v4h-4M6 20v-4h4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Reset to Sample Data
+          </button>
+          <button class="menu-item" id="themeToggleBtn">
+            <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.7"/><path d="M12 2.5v2.4M12 19.1v2.4M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2.5 12h2.4M19.1 12h2.4M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            Toggle Light / Dark
+          </button>
+          <input type="file" id="fileInput" class="hidden-input" accept=".xlsx,.xls">
+          <div class="menu-hint" id="importStatus">Loading sample dataset…</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="section-head" style="margin-top:6px;">
+    <h2>Performance Overview</h2>
+    <span class="sub">Updates live with the filters below</span>
+  </div>
+
+  <div class="overview-grid">
+    <div class="panel gauge-panel">
+      <div class="panel-head">
+        <div>
+          <h3>CM Compliance</h3>
+          <div class="panel-sub">Completed vs. total work orders</div>
+        </div>
+        <span class="trend-pill" id="complianceTrendPill"></span>
+      </div>
+      <div class="gauge-wrap">
+        <div id="complianceGauge"></div>
+        <div class="gauge-center" id="complianceGaugeCenter"></div>
+      </div>
+      <div class="gauge-legend">
+        <div class="legend-item"><span class="legend-dot" style="background:var(--brand);"></span>Compliance</div>
+        <div class="legend-item"><span class="legend-dot" style="background:var(--border);"></span><span id="complianceTargetLabel">Target 90%</span></div>
+      </div>
+    </div>
+
+    <div class="panel trend-panel">
+      <div class="panel-head">
+        <div>
+          <h3>Maintenance Performance Trend</h3>
+          <div class="panel-sub">Normalized index (0–100) so every metric is comparable on one scale</div>
+        </div>
+        <div class="seg" id="trendSeg">
+          <button data-g="day">Day</button>
+          <button data-g="week">Week</button>
+          <button data-g="month" class="active">Month</button>
+        </div>
+      </div>
+      <div class="trend-legend" id="trendLegend"></div>
+      <div class="chart-box" style="height:238px;"><canvas id="trendChart"></canvas></div>
+    </div>
+
+    <div class="panel insights-panel">
+      <div class="panel-head">
+        <div>
+          <h3>Maintenance Insights</h3>
+          <div class="panel-sub">First half vs. second half of the selected period</div>
+        </div>
+      </div>
+      <div class="insight-list" id="insightList"></div>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <h2>Equipment Health</h2>
+    <span class="sub" id="eqSectionSub">Ranked by relative downtime severity — tap a card to filter</span>
+  </div>
+
+  <div class="filterbar" id="filterbar">
+    <span class="filter-label">Equipment:</span>
+    <select class="select" id="eqSelect"></select>
+    <span class="filter-label" style="margin-left:6px;">Type:</span>
+    <div id="eqTypeChips" style="display:contents;"></div>
+    <span class="filter-label" style="margin-left:6px;">Priority:</span>
+    <div id="priorityChips" style="display:contents;"></div>
+    <span class="filter-label" style="margin-left:6px;">Status:</span>
+    <div id="statusChips" style="display:contents;"></div>
+    <span class="filter-label" style="margin-left:6px;">Dates:</span>
+    <input type="date" class="date-input" id="dateFrom">
+    <span class="date-sep">to</span>
+    <input type="date" class="date-input" id="dateTo">
+    <button class="chip-reset" id="resetFilters">Clear filters</button>
+  </div>
+
+  <div class="machine-scroll" id="machineScroll"></div>
+
+  <div class="section-head">
+    <h2>Breakdown by Equipment</h2>
+    <span class="sub" id="eqSectionSub2">Ranked across all equipment (top 8 shown)</span>
+  </div>
+  <div class="grid-4">
+    <div class="panel">
+      <h3>Failure Count</h3>
+      <div class="panel-sub" style="margin-bottom:12px;">Number of CM work orders per equipment</div>
+      <div class="chart-box" style="height:250px;"><canvas id="eqFailureChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <h3>MTTR (hrs)</h3>
+      <div class="panel-sub" style="margin-bottom:12px;">Average repair time per equipment</div>
+      <div class="chart-box" style="height:250px;"><canvas id="eqMttrChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <h3>Downtime (hrs)</h3>
+      <div class="panel-sub" style="margin-bottom:12px;">Total downtime hours per equipment</div>
+      <div class="chart-box" style="height:250px;"><canvas id="eqDowntimeChart"></canvas></div>
+    </div>
+    <div class="panel">
+      <h3>Response Time (min)</h3>
+      <div class="panel-sub" style="margin-bottom:12px;">Average time from request to work start</div>
+      <div class="chart-box" style="height:250px;"><canvas id="eqResponseChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="section-head">
+    <h2>Top 5 Root Causes</h2>
+    <span class="sub">Most frequent failure causes in the current selection</span>
+  </div>
+  <div class="panel">
+    <div class="chart-box" style="height:270px;"><canvas id="causeChart"></canvas></div>
+  </div>
+
+  <div class="section-head">
+    <h2>Work Order Log</h2>
+    <span class="sub">Click a column header to sort</span>
+  </div>
+  <div class="panel">
+    <div class="table-tools">
+      <input type="text" class="search-input" id="searchBox" placeholder="Search work order no., equipment, root cause, failure description…">
+      <span class="count-tag" id="tableCount">– records</span>
+    </div>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th data-key="wo">WO No.</th>
+            <th data-key="eq">Equipment</th>
+            <th data-key="priority">Priority</th>
+            <th data-key="status">Status</th>
+            <th data-key="rootCause">Root Cause</th>
+            <th data-key="failureDesc">Failure Description</th>
+            <th data-key="repairTime">Repair (hrs)</th>
+            <th data-key="downtime">Downtime (hrs)</th>
+            <th data-key="responseMin">Response (min)</th>
+            <th data-key="matCost">Material Cost</th>
+            <th data-key="start">Start Date</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <span id="sourceLabel">Data source: CM_workorder_Raw_data.xlsx (sample)</span>
+  <span id="genDate"></span>
+</footer>
+<script>
+const RAW_SAMPLE_ROWS = [{"Workorder": "CM26-00086", "EquipmentDesc": "Automatic Embossing Press 1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 2, "Status": "Complete", "Root cause": "สายลมเสื่อมสภาพ", "FailureDescription": "มีเสียงลมรั่ว ตรงบริเวณ Infeed", "TotalRepairTime": 3.5, "DownTime": 0.0, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "08/01/2026 17:30:00", "Solution": "เปลี่ยนสายลมใหม่ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00282", "EquipmentDesc": "Control cabinet CAR1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Circuit Breaker spring แข็ง", "FailureDescription": "สวิตช์ Circuit Breaker เปิดไม่ได้", "TotalRepairTime": 0.416666666666667, "DownTime": 0.416666666666667, "Response Time": "00:15:00", "ActMatCost": 0.0, "ActWorkStart": "04/02/2026 08:15:00", "Solution": "ได้ทำการถอด - ประกอบ Circuit Breaker ใหม่ ทดสอบใช้ได้ปกติ"}, {"Workorder": "CM26-00202", "EquipmentDesc": "Control cabinet CAR1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Over load", "FailureDescription": "PLC ไม่ทำงาน", "TotalRepairTime": 1.5, "DownTime": 1.5, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "23/01/2026 08:30:00", "Solution": "Reset MICO อุปกรณ์กลับมาทำงานปกติ"}, {"Workorder": "CM26-00228", "EquipmentDesc": "Embossing clapper die spindle 2 ก-ฮ CAR1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "กาว clapper die เสื่อมสภาพ", "FailureDescription": "แม่พิมพ์หมวด Spindle.2 ออกมาพร้อมกัน 2 อันชนแผ่น", "TotalRepairTime": 0.766666666666667, "DownTime": 0.766666666666667, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "26/01/2026 10:43:00", "Solution": "ทำความสะอาดแม่พิมพ์ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00295", "EquipmentDesc": "Embossing clapper die spindle 3 ก-ฮ CAR1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "กาว clapper die เสื่อมสภาพ", "FailureDescription": "Clapper die spindle 3 \"ย\"เกิดเสียงดังผิดปกติ _x000D_", "TotalRepairTime": 0.466666666666667, "DownTime": 0.466666666666667, "Response Time": "00:01:00", "ActMatCost": 0.0, "ActWorkStart": "06/02/2026 09:17:00", "Solution": "ถอดทำความสะอาด ติดกาวใหม่ ทดสอบตีใช้งานได้ปกติ"}, {"Workorder": "CM26-00182", "EquipmentDesc": "Embossing clapper die spindle6 No.0-9 CAR1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 2, "Status": "Complete", "Root cause": "กาว clapper die เสื่อมสภาพ", "FailureDescription": "Clapper die เลข4,7,8 Spindle.6  เกิดเสียงดังผิดปกติ", "TotalRepairTime": 0.266666666666667, "DownTime": 0.266666666666667, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "21/01/2026 14:14:00", "Solution": "ติดกาวใหม่ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00321", "EquipmentDesc": "Embossing clapper die province CAR1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 2, "Status": "Complete", "Root cause": "กาว clapper die เสื่อมสภาพ", "FailureDescription": "Clapper die จังหวัด ระยอง เกิดเสียงดังผิดปกติ", "TotalRepairTime": 0.416666666666667, "DownTime": 0.416666666666667, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "09/02/2026 16:30:00", "Solution": "ติดกาวใหม่ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00917", "EquipmentDesc": "Embossing clapper die province CAR1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 3, "Status": "Complete", "Root cause": "กาว clapper die เสื่อมสภาพ", "FailureDescription": "ปั้มจังหวัด “ ร้อยเอ็ด“ ไม่ขึ้น", "TotalRepairTime": 1.13333333333333, "DownTime": 1.13333333333333, "Response Time": "00:07:00", "ActMatCost": 0.0, "ActWorkStart": "28/04/2026 13:25:00", "Solution": "ทำการดัดแม่พิมพ์ตัวจังหวัด ทำความสะอาดและติดกาวแม่พิมพ์ใหม่ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00928", "EquipmentDesc": "Embossing cover tool 1st station CAR1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 2, "Status": "Complete", "Root cause": "Clapper die หัก", "FailureDescription": "แผ่นป้ายทะเบียนปั้ม ตัวอักษร ขส แล้ว \"ขส\" ไม่นูน", "TotalRepairTime": 2.41666666666667, "DownTime": 2.41666666666667, "Response Time": "00:02:00", "ActMatCost": 0.0, "ActWorkStart": "29/04/2026 09:00:00", "Solution": "เปลี่ยนแม่พิมพ์ (ขส) ใหม่ พร้อมทดสอบการผลิตสามารถใช้งานได้ปกติ"}, {"Workorder": "CM26-00577", "EquipmentDesc": "Embossing Slot spindle 4 CAR1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 2, "Status": "Complete", "Root cause": "กาว clapper die เสื่อมสภาพ", "FailureDescription": "ปั้มแผ่นป้ายทะเบียนมีขอบขึ้นตรง เลข 6 Spindle. 4", "TotalRepairTime": 0.2, "DownTime": 0.2, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "19/03/2026 09:13:00", "Solution": "ติดกาวแม่พิมพ์ใหม่ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00687", "EquipmentDesc": "Handling pad holder CAR1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 3, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "Suction cup ชำรุด ตำแหน่ง 4.3_x000D_", "TotalRepairTime": 0.0833333333333333, "DownTime": 0.0833333333333333, "Response Time": "00:01:00", "ActMatCost": 750.0, "ActWorkStart": "20/03/2026 14:47:00", "Solution": "เปลี่ยน suction cup ใหม่ในตำแหน่ง 4.3 ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00189", "EquipmentDesc": "Handling pad holder CAR1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 2, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "Suction cup ชำรุด ตำแหน่ง 1.2", "TotalRepairTime": 0.0666666666666667, "DownTime": 0.0666666666666667, "Response Time": "00:00:00", "ActMatCost": 750.0, "ActWorkStart": "22/01/2026 12:24:00", "Solution": "เปลี่ยน suction cup ใหม่ในตำแหน่ง 1.2 ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00190", "EquipmentDesc": "Handling pad holder CAR1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 2, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "Suction cup ชำรุด ตำแหน่ง 2.1", "TotalRepairTime": 0.0666666666666667, "DownTime": 0.0666666666666667, "Response Time": "00:00:00", "ActMatCost": 750.0, "ActWorkStart": "22/01/2026 12:24:00", "Solution": "เปลี่ยน suction cup ใหม่ในตำแหน่ง 2.1 ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00191", "EquipmentDesc": "Handling pad holder CAR1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 2, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "Suction cup ชำรุด ตำแหน่ง 2.2", "TotalRepairTime": 0.0666666666666667, "DownTime": 0.0666666666666667, "Response Time": "00:00:00", "ActMatCost": 750.0, "ActWorkStart": "22/01/2026 12:24:00", "Solution": "เปลี่ยน suction cup ใหม่ในตำแหน่ง 2.2 ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00789", "EquipmentDesc": "Handling pad holder CAR1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 3, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "Suction cup ชำรุด ตำแหน่ง 4.1_x000D_", "TotalRepairTime": 0.166666666666667, "DownTime": 0.166666666666667, "Response Time": "03:37:48", "ActMatCost": 750.0, "ActWorkStart": "09/04/2026 11:33:00", "Solution": "เปลี่ยน suction cup ใหม่ในตำแหน่ง 4.1 ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00227", "EquipmentDesc": "Handling set CAR1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 2, "Status": "Complete", "Root cause": "Config error", "FailureDescription": "แผ่นดูดไม่ขึ้น", "TotalRepairTime": 0.216666666666667, "DownTime": 0.216666666666667, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "26/01/2026 12:32:00", "Solution": "Adjust handling ใหม่ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00183", "EquipmentDesc": "Infeed safety sensor CAR1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Config error", "FailureDescription": "แผ่นทะลุ", "TotalRepairTime": 0.266666666666667, "DownTime": 0.266666666666667, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "21/01/2026 14:14:00", "Solution": "ปรับเปลี่ยนตำแหน่งการวางแผ่นและเซ็นเซอร์ใหม่ เพื่อให้วางแผ่นได้ถูกต้อง และเซ็นเซอร์สามารถตรวจจับแผ่นได้ในกรณีที่แผ่นหยิบไม่ลงถาด และหยุดการทำงานอัตโนมัติเมื่อเกิดความผิดปกติ ทดสอบใช้งานได้ตามปกติ"}, {"Workorder": "CM26-00342", "EquipmentDesc": "Embossing clapper die spindle 3 ก-ฮ CAR2", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "กาว clapper die เสื่อมสภาพ", "FailureDescription": "Clapper die ตัวอักษร \"ถ\" Spindle.3 เกิดเสียงดังผิดปกติ _x000D_", "TotalRepairTime": 0.483333333333333, "DownTime": 0.483333333333333, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "13/02/2026 15:17:00", "Solution": "ติดกาวใหม่ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00096", "EquipmentDesc": "Embossing clapper die spindle5 No.0-9 CAR2", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 2, "Status": "Complete", "Root cause": "Clapper die เสียรูป", "FailureDescription": "Clapper die No.9 Spindle 5 เกิดเสียงดังผิดปกติ", "TotalRepairTime": 0.5, "DownTime": 0.5, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "13/01/2026 12:00:00", "Solution": "นำ Clapper die No.9 ไปดัดคืนรูป และติดกาวใหม่ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00107", "EquipmentDesc": "Embossing clapper die province CAR2", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "กาว clapper die เสื่อมสภาพ", "FailureDescription": "Clapper die จังหวัด กรุงเทพมหานคร เกิดเสียงดังผิดปกติ _x000D_", "TotalRepairTime": 0.333333333333333, "DownTime": 0.333333333333333, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "14/01/2026 12:07:00", "Solution": "ติดกาวใหม่ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00181", "EquipmentDesc": "Embossing clapper die province CAR2", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "กาว clapper die เสื่อมสภาพ", "FailureDescription": "Clapper die จังหวัด กรุงเทพมหานคร เกิดเสียงดังผิดปกติ", "TotalRepairTime": 0.35, "DownTime": 0.35, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "21/01/2026 15:03:00", "Solution": "ติดกาวใหม่ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00251", "EquipmentDesc": "Embossing clapper die province CAR2", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "กาว clapper die เสื่อมสภาพ", "FailureDescription": "Clapper die จังหวัด กรุงเทพมหานคร เกิดเสียงดังผิดปกติ", "TotalRepairTime": 0.3, "DownTime": 0.3, "Response Time": "23:57:00", "ActMatCost": 0.0, "ActWorkStart": "29/01/2026 15:42:00", "Solution": "ติดกาวใหม่ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00262", "EquipmentDesc": "Embossing clapper die province CAR2", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Clapper die หัก", "FailureDescription": "Clapper die จังหวัด \"กรุงเทพมหานคร\" ปั้มนูนไม่สมบูรณ์_x000D_", "TotalRepairTime": 0.833333333333334, "DownTime": 0.833333333333334, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "30/01/2026 15:00:00", "Solution": "เปลี่ยน clapper die จังหวัด\"กรุงเทพมหานคร\" ใหม่ ทดสอบใช้งานปกติ_x000D_"}, {"Workorder": "CM26-00407", "EquipmentDesc": "Embossing clapper die province CAR2", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Dirty", "FailureDescription": "แม่พิมพ์จังหวัด \"เชียงใหม่\" ออกมาพร้อมกัน 2 อันชนแผ่น", "TotalRepairTime": 0.216666666666667, "DownTime": 0.216666666666667, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "24/02/2026 15:00:00", "Solution": "ทำความสะอาดแม่พิมพ์ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00248", "EquipmentDesc": "Embossing cover tool 1st station CAR2", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Config error", "FailureDescription": "เกิดแผ่นทะลุ บริเวณตำแหน่ง Cover Tool 1", "TotalRepairTime": 0.1, "DownTime": 0.1, "Response Time": "00:04:00", "ActMatCost": 0.0, "ActWorkStart": "29/01/2026 10:52:00", "Solution": "ปรับตั้งค่าเครื่องจักร และทดสอบการทำงานแล้ว สามารถใช้งานได้ตามปกติ"}, {"Workorder": "CM26-00366", "EquipmentDesc": "Handling pad holder CAR2", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "Suction cup ชำรุด ตำแหน่ง 1.2_x000D_", "TotalRepairTime": 0.0666666666666667, "DownTime": 0.0666666666666667, "Response Time": "00:01:00", "ActMatCost": 750.0, "ActWorkStart": "16/02/2026 10:21:00", "Solution": "เปลี่ยน suction cup ใหม่ในตำแหน่ง 1.2 ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00408", "EquipmentDesc": "Handling pad holder CAR2", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "Suction cup ชำรุด ตำแหน่ง2.2", "TotalRepairTime": 0.4, "DownTime": 0.4, "Response Time": "00:00:00", "ActMatCost": 750.0, "ActWorkStart": "24/02/2026 12:00:00", "Solution": "Suction cup ใหม่ในตำแหน่ง 2.2 ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00204", "EquipmentDesc": "Handling pad holder CAR2", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "Suction cup ชำรุด ตำแหน่ง 3.3", "TotalRepairTime": 0.0666666666666667, "DownTime": 0.0666666666666667, "Response Time": "00:00:00", "ActMatCost": 750.0, "ActWorkStart": "23/01/2026 14:00:00", "Solution": "Suction cup ใหม่ในตำแหน่ง 3.3 ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00085", "EquipmentDesc": "Handling pad holder CAR2", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "suction cup ชำรุด ตำแหน่ง 4.1", "TotalRepairTime": 0.0666666666666667, "DownTime": 0.0666666666666667, "Response Time": "00:00:00", "ActMatCost": 750.0, "ActWorkStart": "12/01/2026 10:05:00", "Solution": "เปลี่ยน suction cup ใหม่ในตำแหน่ง 4.1 ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00173", "EquipmentDesc": "Handling pad holder CAR2", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "Suction cup ชำรุด ตำแหน่ง 4.3", "TotalRepairTime": 0.0666666666666667, "DownTime": 0.0666666666666667, "Response Time": "00:00:00", "ActMatCost": 750.0, "ActWorkStart": "20/01/2026 14:41:00", "Solution": "เปลี่ยน suction cup ใหม่ในตำแหน่ง 4.3 ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00762", "EquipmentDesc": "Handling pad holder CAR2", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 3, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "Suction cup ชำรุด ตำแหน่ง 4.3", "TotalRepairTime": 0.0666666666666667, "DownTime": 0.0666666666666667, "Response Time": "00:00:00", "ActMatCost": 750.0, "ActWorkStart": "07/04/2026 08:30:00", "Solution": "เปลี่ยน suction cup ใหม่ในตำแหน่ง 4.3 ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00229", "EquipmentDesc": "Festo safety cylinder CAR2", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Cylider seal เสื่อมสภาพ", "FailureDescription": "เครื่องจักรไม่ทำงาน", "TotalRepairTime": 0.883333333333333, "DownTime": 0.883333333333333, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "26/01/2026 10:29:00", "Solution": "สลับอุปกรณ์ที่มีอยู่ตำแหน่งที่1 มาใส่แทนที่ชำรุด ทดสอบใช้งานได้เป็นปกติ"}, {"Workorder": "CM26-00409", "EquipmentDesc": "Embossing clapper die spindle 1 No.0-9  MOTO1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Belt spring หัก", "FailureDescription": "ปั้มนูนแผ่นป้ายทะเบียนไม่ขึ้น", "TotalRepairTime": 0.4, "DownTime": 2.0, "Response Time": "00:00:00", "ActMatCost": 112.0, "ActWorkStart": "24/02/2026 11:26:00", "Solution": "เปลี่ยนแผ่น belt spring ใหม่ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00433", "EquipmentDesc": "Embossing clapper die spindle 8 No.0-9  MOTO1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Clapper die หัก", "FailureDescription": "Clapper die Spindle.8 No.5 ชนแผ่น (หมวด หนองบัวลำภู)_x000D_", "TotalRepairTime": 0.933333333333333, "DownTime": 0.233333333333333, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "27/02/2026 10:14:00", "Solution": "เปลี่ยนClapper die   Spindle.8 No.5 ใหม่ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00567", "EquipmentDesc": "Embossing cover tool 2nd station Left side  MOTO1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 2, "Status": "Complete", "Root cause": "Config error", "FailureDescription": "เกิดแผ่นทะลุ บริเวณตำแหน่ง Cover Tool 2และ3", "TotalRepairTime": 0.3, "DownTime": 0.5, "Response Time": "10:20:12", "ActMatCost": 0.0, "ActWorkStart": "18/03/2026 13:13:00", "Solution": "ปรับตั้งค่าเครื่องจักร และทดสอบการทำงานแล้ว สามารถใช้งานได้ตามปกติ"}, {"Workorder": "CM26-00226", "EquipmentDesc": "Embossing cover tool 2nd station Right side  MOTO1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "น็อตหัก", "FailureDescription": "แผ่นป้ายทะเบียน ปั้ม ขส และตัวเลข ไม่นูน", "TotalRepairTime": 3.81666666666667, "DownTime": 0.5, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "26/01/2026 09:30:00", "Solution": "เอาน็อตที่คาในรูออก แล้วเปลี่ยนน็อตใหม่ ทดสอบตีใช้งานได้ปกติ"}, {"Workorder": "CM26-00230", "EquipmentDesc": "Handling pad holder  MOTO1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 2, "Status": "Complete", "Root cause": "Cylider seal เสื่อมสภาพ", "FailureDescription": "Handling เครื่องจักรไม่ทำงาน", "TotalRepairTime": 0.666666666666667, "DownTime": 1.0, "Response Time": "00:00:00", "ActMatCost": 7314.0, "ActWorkStart": "26/01/2026 19:00:00", "Solution": "เปลี่ยนอุปกรณ์ ชุด FESTO Cylinder Actuators ใหม่ 1 Ea. และ  One-way flow control valve 2 Ea.  ทดสอบใช้งานได้เป็นปกติ"}, {"Workorder": "CM26-00084", "EquipmentDesc": "Handling pad holder  MOTO1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "suction cup ชำรุด ตำแหน่ง 3.1", "TotalRepairTime": 0.05, "DownTime": 0.666666666666667, "Response Time": "00:00:00", "ActMatCost": 750.0, "ActWorkStart": "09/01/2026 08:30:00", "Solution": "เปลี่ยน suction cup ใหม่ในตำแหน่ง 3.1 ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00052", "EquipmentDesc": "Handling pad holder  MOTO1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "suction cup ชำรุด ตำแหน่ง 1.1,1.2", "TotalRepairTime": 0.1, "DownTime": 3.0, "Response Time": "00:00:00", "ActMatCost": 1500.0, "ActWorkStart": "08/01/2026 14:00:00", "Solution": "เปลี่ยน suction cup ใหม่ในตำแหน่ง 1.1,1.2 ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00761", "EquipmentDesc": "Handling pad holder  MOTO1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 3, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "Suction cup เกิดการฉีกขาด ตำแหน่ง 5.4_x000D_", "TotalRepairTime": 0.0666666666666667, "DownTime": 0.166666666666667, "Response Time": "00:00:00", "ActMatCost": 750.0, "ActWorkStart": "07/04/2026 08:30:00", "Solution": "เปลี่ยน suction cup ใหม่ในตำแหน่ง 5.4 ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00327", "EquipmentDesc": "Handling pad holder  MOTO1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Cylider seal เสื่อมสภาพ", "FailureDescription": "กระบอกลม Guided Drive ไม่ทำงาน", "TotalRepairTime": 0.75, "DownTime": 0.8, "Response Time": "00:02:00", "ActMatCost": 0.0, "ActWorkStart": "11/02/2026 08:49:00", "Solution": "เปลี่ยนอุปกรณ์ใหม่ ทดสอบใช้งานได้เป็นปกติ"}, {"Workorder": "CM26-00326", "EquipmentDesc": "Handling pad holder  MOTO1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 2, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "Suction cup ชำรุด ตำแหน่ง 5.4_x000D_", "TotalRepairTime": 0.0833333333333333, "DownTime": 2.91666666666667, "Response Time": "01:00:00", "ActMatCost": 750.0, "ActWorkStart": "11/02/2026 09:45:00", "Solution": "เปลี่ยน suction cup ใหม่ในตำแหน่ง 5.4 ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00296", "EquipmentDesc": "Handling pad holder  MOTO1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Cylider seal เสื่อมสภาพ", "FailureDescription": "กระบอกลม Guided Drive ไม่ทำงาน", "TotalRepairTime": 1.45, "DownTime": 0.0, "Response Time": "00:00:00", "ActMatCost": 1462.0, "ActWorkStart": "06/02/2026 11:50:00", "Solution": "เปลี่ยนอุปกรณ์ใหม่ ทดสอบใช้งานได้เป็นปกติ"}, {"Workorder": "CM26-00297", "EquipmentDesc": "Handling pad holder  MOTO1", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "suction cup ชำรุด ตำแหน่ง 3.1", "TotalRepairTime": 0.0666666666666667, "DownTime": 0.0, "Response Time": "00:00:00", "ActMatCost": 750.0, "ActWorkStart": "06/02/2026 11:50:00", "Solution": "เปลี่ยน suction cup ใหม่ในตำแหน่ง 3.1 ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00383", "EquipmentDesc": "Handling pad holder  MOTO2", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 2, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "Suction cup ชำรุด ตำแหน่ง 3.3", "TotalRepairTime": 0.0833333333333333, "DownTime": 0.0, "Response Time": "00:00:00", "ActMatCost": 750.0, "ActWorkStart": "19/02/2026 12:00:00", "Solution": "Suction cup ใหม่ในตำแหน่ง 3.3 ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00333", "EquipmentDesc": "Handling pad holder  MOTO2", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "Suction cup ชำรุด ตำแหน่ง (3.4),(4.4),(5.3)_x000D_", "TotalRepairTime": 0.2, "DownTime": 0.0, "Response Time": "00:00:00", "ActMatCost": 2250.0, "ActWorkStart": "12/02/2026 12:00:00", "Solution": "Suction cup ใหม่ในตำแหน่ง(3.4),(4.4),(5.3)  ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00046", "EquipmentDesc": "Handling pad holder  MOTO2", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "suction cup ชำรุด ตำแหน่ง 1.2", "TotalRepairTime": 0.2, "DownTime": 0.0, "Response Time": "00:00:00", "ActMatCost": 750.0, "ActWorkStart": "05/01/2026 12:35:00", "Solution": "เปลี่ยน suction cup ใหม่ในตำแหน่ง 1.2 ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00108", "EquipmentDesc": "Handling pad holder  MOTO2", "EquipmentTypeDesc": "เครื่องปั๊มนูนอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Suction cup เสื่อมสภาพ", "FailureDescription": "suction cup ชำรุด ตำแหน่ง 3.2", "TotalRepairTime": 0.0666666666666667, "DownTime": 0.0, "Response Time": "00:00:00", "ActMatCost": 750.0, "ActWorkStart": "14/01/2026 15:00:00", "Solution": "เปลี่ยน suction cup ใหม่ในตำแหน่ง 3.2 ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00223", "EquipmentDesc": "Pump AIR1", "EquipmentTypeDesc": "เครื่องปั๊มลม", "Priority": 2, "Status": "Complete", "Root cause": "Fitting เสื่อมสภาพ", "FailureDescription": "น้ำเดรมรั่วซึม จาก Fitting", "TotalRepairTime": 0.5, "DownTime": 0.0, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "26/01/2026 20:30:00", "Solution": "เปลี่ยน Fitting และสายเดรนน้ำใหม่ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00178", "EquipmentDesc": "HOTS Convenyor belt CAR1", "EquipmentTypeDesc": "เครื่องเคลือบสีด้วยแผ่นฟิล์มความร้อน", "Priority": 2, "Status": "Complete", "Root cause": "Cylider seal เสื่อมสภาพ", "FailureDescription": "กระบอกลม Guided Cylinder ตำแหน่งสายพานลำเลียง  ไม่ทำงาน", "TotalRepairTime": 2.0, "DownTime": 0.0, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "20/01/2026 18:00:00", "Solution": "ถอดอุปกรณ์ออกมาทำความสะอาดแล้วประกอบกลับ ทดสอบใช้งานได้เป็นปกติ"}, {"Workorder": "CM26-00122", "EquipmentDesc": "HOTS Convenyor belt CAR1", "EquipmentTypeDesc": "เครื่องเคลือบสีด้วยแผ่นฟิล์มความร้อน", "Priority": 1, "Status": "Complete", "Root cause": "Config error", "FailureDescription": "ไกด์ประครองแผ่นเอียง", "TotalRepairTime": 0.233333333333333, "DownTime": 0.0, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "15/01/2026 09:36:00", "Solution": "ปรับระยะไกด์ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00225", "EquipmentDesc": "Hot stamp wheel2 CAR1", "EquipmentTypeDesc": "เครื่องเคลือบสีด้วยแผ่นฟิล์มความร้อน", "Priority": 2, "Status": "Complete", "Root cause": "Config error", "FailureDescription": "ฟอยล์สีติดไม่เต็มบริเวณขอบแผ่นป้ายทะเบียน", "TotalRepairTime": 0.5, "DownTime": 0.0, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "26/01/2026 10:00:00", "Solution": "ปรับความตึงของฟอยล์ให้เหมาะสม และใช้อุณหภูมิที่เหมาะสม ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00224", "EquipmentDesc": "Hot stamp wheel2 CAR1", "EquipmentTypeDesc": "เครื่องเคลือบสีด้วยแผ่นฟิล์มความร้อน", "Priority": 2, "Status": "Complete", "Root cause": "Ball bearing เสื่อมสภาพ", "FailureDescription": "ลูกปืน hot stamp wheel 2 ลูกซ้าย ติดขัด", "TotalRepairTime": 0.5, "DownTime": 0.0, "Response Time": "00:00:00", "ActMatCost": 104.0, "ActWorkStart": "26/01/2026 20:30:00", "Solution": "เปลี่ยนอะไหล่ใหม่ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00848", "EquipmentDesc": "Hot stamp wheel1 CAR2", "EquipmentTypeDesc": "เครื่องเคลือบสีด้วยแผ่นฟิล์มความร้อน", "Priority": 2, "Status": "Complete", "Root cause": "Config error", "FailureDescription": "ฟอยล์ติดลูกกลิ้ง hotstemp ลูกที่ 1", "TotalRepairTime": 1.0, "DownTime": 0.0, "Response Time": "00:01:00", "ActMatCost": 0.0, "ActWorkStart": "21/04/2026 12:00:00", "Solution": "ฟอยล์ดึงระหว่างกระบวนการผลิตทำให้ขาดไปติดที่ลูกกลิ้ง แก้ไขโดยถอดฝาครอบ hotstemp ลอกฟอยล์ที่ติดลูกกลิ้งออก เช็ดทำความสะอาด ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00246", "EquipmentDesc": "Hot stamp wheel2 CAR2", "EquipmentTypeDesc": "เครื่องเคลือบสีด้วยแผ่นฟิล์มความร้อน", "Priority": 2, "Status": "Complete", "Root cause": "Ball bearing เสื่อมสภาพ", "FailureDescription": "ลูกปืน hot stamp wheel 2 ลูกซ้าย ติดขัด", "TotalRepairTime": 0.666666666666667, "DownTime": 0.0, "Response Time": "00:08:00", "ActMatCost": 104.0, "ActWorkStart": "28/01/2026 15:20:00", "Solution": "เปลี่ยนอะไหล่ใหม่ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00566", "EquipmentDesc": "Hot Stamp Machine 2", "EquipmentTypeDesc": "เครื่องเคลือบสีด้วยแผ่นฟิล์มความร้อน", "Priority": 3, "Status": "Complete", "Root cause": "Config error", "FailureDescription": "แผ่นป้ายทะเบียนเกิดเส้นขอบบน", "TotalRepairTime": 3.0, "DownTime": 0.0, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "17/03/2026 12:00:00", "Solution": "ปรับค่าความร้อนจาก 190/190 เป็น 195/195 และปรับค่าลูกกลิ้งแรงกด ทดสอบใช้งานแล้ว สามารถใช้งานได้ปกติค่ะ"}, {"Workorder": "CM26-00579", "EquipmentDesc": "Hot Stamp Machine 1", "EquipmentTypeDesc": "เครื่องเคลือบสีด้วยแผ่นฟิล์มความร้อน", "Priority": 2, "Status": "Complete", "Root cause": "Config error", "FailureDescription": "แผ่นป้ายทะเบียนติดซ้อนบริเวณตำแหน่งออกจากเครื่อง Hot stamp", "TotalRepairTime": 0.5, "DownTime": 0.0, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "19/03/2026 12:00:00", "Solution": "ปรับระยะทางออก Hotstamp ใหม่และปรับความร้อน จาก 195/195 เป็น 190/190 และทำการทดสอบทำงานได้ตามปกติ"}, {"Workorder": "CM26-00368", "EquipmentDesc": "Hot stamp wheel2 MOTO1", "EquipmentTypeDesc": "เครื่องเคลือบสีด้วยแผ่นฟิล์มความร้อน", "Priority": 1, "Status": "Complete", "Root cause": "Ball bearing เสื่อมสภาพ", "FailureDescription": "Hot stamp wheel 2 ไม่ทำงาน", "TotalRepairTime": 4.86666666666667, "DownTime": 0.0, "Response Time": "00:01:00", "ActMatCost": 989.0, "ActWorkStart": "16/02/2026 08:48:00", "Solution": "ดำเนินการเปลี่ยนลูกปืนใหม่ 3ตัว ทดสอบใช้งานได้ตามปกติ"}, {"Workorder": "CM26-00322", "EquipmentDesc": "HOTS Convenyor belt  MOTO2", "EquipmentTypeDesc": "เครื่องเคลือบสีด้วยแผ่นฟิล์มความร้อน", "Priority": 1, "Status": "Complete", "Root cause": "Config error", "FailureDescription": "ไกด์ประครองแผ่นเอียง", "TotalRepairTime": 0.216666666666667, "DownTime": 0.0, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "10/02/2026 08:57:00", "Solution": "ปรับระยะไกด์ ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00508", "EquipmentDesc": "Hot stamp wheel1  MOTO2", "EquipmentTypeDesc": "เครื่องเคลือบสีด้วยแผ่นฟิล์มความร้อน", "Priority": 2, "Status": "Complete", "Root cause": "Ball bearing เสื่อมสภาพ", "FailureDescription": "ลูกปืน hot stamp wheel 1,2 ลูกซ้ายและขวา ติดขัด", "TotalRepairTime": 0.333333333333333, "DownTime": 0.0, "Response Time": "00:00:00", "ActMatCost": 168.0, "ActWorkStart": "10/03/2026 12:00:00", "Solution": "เปลี่ยนอะไหล่ใหม่ จำนวน 2 อัน  ทดสอบใช้งานได้ปกติ"}, {"Workorder": "CM26-00123", "EquipmentDesc": "Conveyor cylinder blockage sensor CAR2", "EquipmentTypeDesc": "เครื่องเรียงและบรรจุแผ่นป้ายอัตโนมัติ", "Priority": 1, "Status": "Complete", "Root cause": "Config error", "FailureDescription": "เกิดอาการแผ่นซ้อนกัน", "TotalRepairTime": 0.166666666666667, "DownTime": 0.0, "Response Time": "00:00:00", "ActMatCost": 0.0, "ActWorkStart": "15/01/2026 13:05:00", "Solution": "ปรับตั้งค่าระยะเซนเซอร์ใหม่ และทดสอบแล้วใช้งานได้ปกติ"}, {"Workorder": "CM26-00915", "EquipmentDesc": "Dummy plate sensor CAR2", "EquipmentTypeDesc": "เครื่องเรียงและบรรจุแผ่นป้ายอัตโนมัติ", "Priority": 3, "Status": "Complete", "Root cause": "Operator error", "FailureDescription": "แผ่นดัมมี่ค้าง", "TotalRepairTime": 0.8, "DownTime": 0.0, "Response Time": "00:01:00", "ActMatCost": 0.0, "ActWorkStart": "28/04/2026 12:30:00", "Solution": "นำแผ่นดัมมี่ออกและตั้งตำแหน่งใหม่ให้ถูกต้อง ทดสอบใช้งานได้ตามปกติ"}, {"Workorder": "CM26-00916", "EquipmentDesc": "KUKA gripper CAR2", "EquipmentTypeDesc": "เครื่องเรียงและบรรจุแผ่นป้ายอัตโนมัติ", "Priority": 2, "Status": "Complete", "Root cause": "Config error", "FailureDescription": "หุ่นยนต์ไม่สามารถหยิบแผ่นได้ เนื่องจากค้างที่แผ่นดัมมี่หมด", "TotalRepairTime": 2.91666666666667, "DownTime": 0.0, "Response Time": "23:50:00", "ActMatCost": 0.0, "ActWorkStart": "28/04/2026 13:20:00", "Solution": "ปรับตั้งค่าตำแหน่งหุ่นยนต์ใหม่_x000D_\nตรวจสอบการทำงานของระบบหลังปรับแก้ ทดสอบแล้วสามารถใช้งานได้ตามปกติ"}];
+</script>
+<script>
+/* =====================================================================
+   Self-contained replacements for Chart.js and SheetJS.
+   No CDN, no network access required — everything the browser needs
+   (Canvas 2D, DOMParser, DecompressionStream) is built in.
+   ===================================================================== */
+const Mini = (function(){
+  function dpr(){ return window.devicePixelRatio || 1; }
+
+  function setupCanvas(canvas){
+    const parent = canvas.parentElement;
+    const rect = parent.getBoundingClientRect();
+    const ratio = dpr();
+    const w = Math.max(1, Math.round(rect.width));
+    const h = Math.max(1, Math.round(rect.height));
+    canvas.width = Math.max(1, Math.round(w * ratio));
+    canvas.height = Math.max(1, Math.round(h * ratio));
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.setTransform(ratio,0,0,ratio,0,0);
+    return { ctx, width: w, height: h };
+  }
+
+  function niceMax(v){
+    if (!isFinite(v) || v <= 0) return 1;
+    const mag = Math.pow(10, Math.floor(Math.log10(v)));
+    const norm = v / mag;
+    let step;
+    if (norm <= 1) step = 1; else if (norm <= 2) step = 2; else if (norm <= 5) step = 5; else step = 10;
+    return step * mag;
+  }
+
+  function fmtNum(v){
+    const r = Math.round(v*100)/100;
+    return r.toString();
+  }
+
+  function ensureTooltip(){
+    let tip = document.getElementById('miniTooltip');
+    if (!tip){
+      tip = document.createElement('div');
+      tip.id = 'miniTooltip';
+      tip.style.cssText = 'position:fixed; pointer-events:none; z-index:1000; font-size:12px; padding:8px 10px; border-radius:6px; display:none; max-width:260px; line-height:1.4; box-shadow:0 6px 20px rgba(0,0,0,0.25);';
+      document.body.appendChild(tip);
+    }
+    return tip;
+  }
+  function styleTooltip(tip, c){
+    tip.style.background = c.panel;
+    tip.style.border = '1px solid ' + c.grid;
+    tip.style.color = c.text;
+  }
+
+  function roundRectTop(ctx,x,y,w,h,r){
+    if (h <= 0.5) return;
+    r = Math.max(0, Math.min(r, w/2, h));
+    ctx.beginPath();
+    ctx.moveTo(x, y+h);
+    ctx.lineTo(x, y+r);
+    ctx.arcTo(x,y,x+r,y,r);
+    ctx.lineTo(x+w-r,y);
+    ctx.arcTo(x+w,y,x+w,y+r,r);
+    ctx.lineTo(x+w,y+h);
+    ctx.closePath();
+  }
+  function roundRectRight(ctx,x,y,w,h,r){
+    w = Math.max(0.5, w);
+    r = Math.max(0, Math.min(r, w, h/2));
+    ctx.beginPath();
+    ctx.moveTo(x,y);
+    ctx.lineTo(x+w-r,y);
+    ctx.arcTo(x+w,y,x+w,y+r,r);
+    ctx.lineTo(x+w,y+h-r);
+    ctx.arcTo(x+w,y+h,x+w-r,y+h,r);
+    ctx.lineTo(x,y+h);
+    ctx.closePath();
+  }
+
+  // ---- combo bar+line chart (dual axis) ----
+  function barLineChart(canvas, opts){
+    const tip = ensureTooltip();
+    let hoverIndex = -1, layout = null;
+
+    function draw(){
+      const {ctx, width, height} = setupCanvas(canvas);
+      ctx.clearRect(0,0,width,height);
+      const c = opts.colors;
+      const padL = 42, padR = 46, padT = 24, padB = 28;
+      const chartW = Math.max(10, width - padL - padR);
+      const chartH = Math.max(10, height - padT - padB);
+      const n = opts.labels.length || 1;
+      const barMax = niceMax(Math.max(1, ...opts.bar.data, 0));
+      const lineMax = niceMax(Math.max(1, ...opts.line.data, 0));
+
+      ctx.font = '11px Inter, sans-serif';
+      const divisions = 4;
+      for (let i=0;i<=divisions;i++){
+        const y = padT + chartH - (chartH * i/divisions);
+        ctx.strokeStyle = c.grid; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(padL+chartW, y); ctx.stroke();
+        ctx.fillStyle = c.mute; ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+        ctx.fillText(fmtNum(barMax*i/divisions), padL-8, y);
+        ctx.textAlign = 'left';
+        ctx.fillText(fmtNum(lineMax*i/divisions), padL+chartW+8, y);
+      }
+
+      const slot = chartW / n;
+      const barW = Math.min(46, slot*0.46);
+      const points = [];
+      for (let i=0;i<n;i++){
+        const cx = padL + slot*i + slot/2;
+        const bh = (opts.bar.data[i]/barMax) * chartH;
+        const bx = cx - barW/2;
+        const by = padT + chartH - bh;
+        if (i === hoverIndex){
+          ctx.save(); ctx.strokeStyle = c.grid; ctx.setLineDash([3,3]);
+          ctx.beginPath(); ctx.moveTo(cx, padT); ctx.lineTo(cx, padT+chartH); ctx.stroke();
+          ctx.restore();
+        }
+        ctx.globalAlpha = (hoverIndex===-1 || i===hoverIndex) ? 1 : 0.55;
+        ctx.fillStyle = opts.bar.color;
+        roundRectTop(ctx, bx, by, barW, bh, 5);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+
+        const ly = padT + chartH - (opts.line.data[i]/lineMax)*chartH;
+        points.push({x:cx, y:ly});
+
+        ctx.fillStyle = c.mute; ctx.textAlign = 'center'; ctx.textBaseline = 'top'; ctx.font = '11.5px Inter, sans-serif';
+        ctx.fillText(opts.labels[i], cx, padT+chartH+8);
+      }
+
+      ctx.strokeStyle = opts.line.color; ctx.lineWidth = 2.2; ctx.beginPath();
+      points.forEach((p,i)=>{ i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y); });
+      ctx.stroke();
+      points.forEach((p,i)=>{
+        ctx.fillStyle = opts.line.color;
+        ctx.beginPath(); ctx.arc(p.x,p.y, i===hoverIndex?4.5:3, 0, Math.PI*2); ctx.fill();
+      });
+
+      ctx.textBaseline = 'middle'; ctx.font = '11.5px Inter, sans-serif'; ctx.textAlign='right';
+      let lx = width - 4;
+      [{label:opts.line.label,color:opts.line.color},{label:opts.bar.label,color:opts.bar.color}].forEach(it=>{
+        ctx.fillStyle = c.text; ctx.fillText(it.label, lx, 10);
+        const tw = ctx.measureText(it.label).width;
+        ctx.fillStyle = it.color;
+        ctx.beginPath(); ctx.arc(lx - tw - 10, 10, 4, 0, Math.PI*2); ctx.fill();
+        lx -= (tw + 26);
+      });
+
+      layout = {padL, padT, chartW, chartH, slot, n};
+    }
+
+    function onMove(e){
+      if (!layout) return;
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+      if (mx < layout.padL || mx > layout.padL+layout.chartW || my < 0 || my > rect.height){
+        if (hoverIndex !== -1){ hoverIndex = -1; draw(); }
+        tip.style.display = 'none';
+        return;
+      }
+      const idx = Math.min(layout.n-1, Math.max(0, Math.floor((mx-layout.padL)/layout.slot)));
+      if (idx !== hoverIndex){ hoverIndex = idx; draw(); }
+      styleTooltip(tip, opts.colors);
+      tip.innerHTML = '<div style="font-weight:600;margin-bottom:4px;">'+opts.labels[idx]+'</div>'+
+        '<div>'+opts.bar.label+': <b>'+fmtNum(opts.bar.data[idx])+'</b></div>'+
+        '<div>'+opts.line.label+': <b>'+fmtNum(opts.line.data[idx])+'</b></div>';
+      tip.style.display = 'block';
+      tip.style.left = (e.clientX+14)+'px';
+      tip.style.top = (e.clientY+14)+'px';
+    }
+    function onLeave(){ if(hoverIndex!==-1){hoverIndex=-1; draw();} tip.style.display='none'; }
+
+    canvas.addEventListener('mousemove', onMove);
+    canvas.addEventListener('mouseleave', onLeave);
+    const ro = new ResizeObserver(()=>draw());
+    ro.observe(canvas.parentElement);
+    draw();
+
+    return { destroy(){
+      canvas.removeEventListener('mousemove', onMove);
+      canvas.removeEventListener('mouseleave', onLeave);
+      ro.disconnect(); tip.style.display='none';
+    } };
+  }
+
+  // ---- horizontal bar chart ----
+  function hBarChart(canvas, opts){
+    const tip = ensureTooltip();
+    let hoverIndex = -1, layout = null;
+
+    function draw(){
+      const {ctx, width, height} = setupCanvas(canvas);
+      ctx.clearRect(0,0,width,height);
+      const c = opts.colors;
+      const n = Math.max(1, opts.labels.length);
+      const labelColW = Math.min(150, Math.max(60, width*0.34));
+      const padL = labelColW + 10, padR = 44, padT = 6, padB = 20;
+      const chartW = Math.max(10, width - padL - padR);
+      const chartH = Math.max(10, height - padT - padB);
+      const max = niceMax(Math.max(1, ...opts.values, 0));
+      const rowH = chartH / n;
+      const barH = Math.min(20, rowH*0.6);
+
+      ctx.font = '10.5px Inter, sans-serif';
+      const divisions = 4;
+      for (let i=0;i<=divisions;i++){
+        const x = padL + chartW*i/divisions;
+        ctx.strokeStyle = c.grid;
+        ctx.beginPath(); ctx.moveTo(x, padT); ctx.lineTo(x, padT+chartH); ctx.stroke();
+        ctx.fillStyle = c.mute; ctx.textAlign = 'center'; ctx.textBaseline='top';
+        ctx.fillText(fmtNum(max*i/divisions), x, padT+chartH+4);
+      }
+
+      const bars = [];
+      for (let i=0;i<n;i++){
+        const cy = padT + rowH*i + rowH/2;
+        const bw = (opts.values[i]/max) * chartW;
+        const by = cy - barH/2;
+        ctx.globalAlpha = (hoverIndex===-1 || i===hoverIndex) ? 1 : 0.6;
+        ctx.fillStyle = opts.color;
+        roundRectRight(ctx, padL, by, bw, barH, 5);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+
+        ctx.fillStyle = c.text; ctx.textAlign='right'; ctx.textBaseline='middle'; ctx.font='10.8px Inter, sans-serif';
+        ctx.fillText(truncToWidth(opts.labels[i], labelColW, ctx), padL-8, cy);
+
+        ctx.fillStyle = c.mute; ctx.textAlign='left';
+        ctx.fillText(fmtNum(opts.values[i]), padL+bw+6, cy);
+
+        bars.push({cy});
+      }
+      layout = {padL, padT, chartW, chartH, rowH, n};
+    }
+
+    function truncToWidth(l, maxW, ctx){
+      if (ctx.measureText(l).width <= maxW) return l;
+      let s = l;
+      while (s.length>1 && ctx.measureText(s+'…').width > maxW) s = s.slice(0,-1);
+      return s + '…';
+    }
+
+    function onMove(e){
+      if (!layout) return;
+      const rect = canvas.getBoundingClientRect();
+      const my = e.clientY - rect.top;
+      let idx = Math.floor((my - layout.padT) / layout.rowH);
+      if (idx < 0 || idx >= layout.n){
+        if (hoverIndex!==-1){hoverIndex=-1; draw();}
+        tip.style.display='none'; return;
+      }
+      if (idx !== hoverIndex){ hoverIndex = idx; draw(); }
+      styleTooltip(tip, opts.colors);
+      const fullLabel = (opts.fullLabels && opts.fullLabels[idx]) || opts.labels[idx];
+      tip.innerHTML = '<div style="font-weight:600;margin-bottom:2px;">'+fullLabel+'</div><div>'+fmtNum(opts.values[idx])+'</div>';
+      tip.style.display = 'block';
+      tip.style.left = (e.clientX+14)+'px';
+      tip.style.top = (e.clientY+14)+'px';
+    }
+    function onLeave(){ if(hoverIndex!==-1){hoverIndex=-1; draw();} tip.style.display='none'; }
+
+    canvas.addEventListener('mousemove', onMove);
+    canvas.addEventListener('mouseleave', onLeave);
+    const ro = new ResizeObserver(()=>draw());
+    ro.observe(canvas.parentElement);
+    draw();
+
+    return { destroy(){
+      canvas.removeEventListener('mousemove', onMove);
+      canvas.removeEventListener('mouseleave', onLeave);
+      ro.disconnect(); tip.style.display='none';
+    } };
+  }
+
+  return { barLineChart, hBarChart };
+})();
+
+/* ---- minimal offline .xlsx reader (ZIP + OOXML, no external library) ---- */
+const MiniXLSX = (function(){
+  function u16(buf,o){ return buf[o] | (buf[o+1]<<8); }
+  function u32(buf,o){ return (buf[o] | (buf[o+1]<<8) | (buf[o+2]<<16) | (buf[o+3]<<24)) >>> 0; }
+
+  async function inflateRaw(bytes){
+    if (typeof DecompressionStream === 'undefined'){
+      throw new Error('This browser does not support reading compressed .xlsx files offline (DecompressionStream unavailable). Please use a recent version of Edge or Chrome.');
+    }
+    const ds = new DecompressionStream('deflate-raw');
+    const stream = new Blob([bytes]).stream().pipeThrough(ds);
+    const out = await new Response(stream).arrayBuffer();
+    return new Uint8Array(out);
+  }
+
+  async function unzip(arrayBuffer){
+    const buf = new Uint8Array(arrayBuffer);
+    let eocd = -1;
+    const searchFrom = Math.max(0, buf.length - 22 - 65557);
+    for (let i = buf.length - 22; i >= searchFrom; i--){
+      if (u32(buf,i) === 0x06054b50){ eocd = i; break; }
+    }
+    if (eocd < 0) throw new Error('Not a valid .xlsx file (zip signature not found)');
+    const cdEntries = u16(buf, eocd+10);
+    const cdOffset = u32(buf, eocd+16);
+    const files = {};
+    let p = cdOffset;
+    for (let i=0; i<cdEntries; i++){
+      if (u32(buf,p) !== 0x02014b50) break;
+      const method = u16(buf, p+10);
+      const compSize = u32(buf, p+20);
+      const nameLen = u16(buf, p+28);
+      const extraLen = u16(buf, p+30);
+      const commentLen = u16(buf, p+32);
+      const localOffset = u32(buf, p+42);
+      const name = new TextDecoder('utf-8').decode(buf.subarray(p+46, p+46+nameLen));
+      files[name] = { method, compSize, localOffset };
+      p += 46 + nameLen + extraLen + commentLen;
+    }
+    async function extract(name){
+      const meta = files[name];
+      if (!meta) return null;
+      const lp = meta.localOffset;
+      const lNameLen = u16(buf, lp+26);
+      const lExtraLen = u16(buf, lp+28);
+      const dataStart = lp + 30 + lNameLen + lExtraLen;
+      const compData = buf.subarray(dataStart, dataStart+meta.compSize);
+      let raw;
+      if (meta.method === 0) raw = compData;
+      else if (meta.method === 8) raw = await inflateRaw(compData);
+      else throw new Error('Unsupported compression method in xlsx entry: '+name);
+      return new TextDecoder('utf-8').decode(raw);
+    }
+    return { extract };
+  }
+
+  function xml(str){ return new DOMParser().parseFromString(str, 'application/xml'); }
+
+  function parseSharedStrings(str){
+    if (!str) return [];
+    const doc = xml(str);
+    const sis = doc.getElementsByTagName('si');
+    const out = [];
+    for (let i=0;i<sis.length;i++){
+      const ts = sis[i].getElementsByTagName('t');
+      let text = '';
+      for (let j=0;j<ts.length;j++) text += ts[j].textContent;
+      out.push(text);
+    }
+    return out;
+  }
+
+  const BUILTIN_DATE_FMTS = new Set([14,15,16,17,18,19,20,21,22,27,28,29,30,31,32,33,34,35,36,45,46,47,50,57]);
+  function isDateFmt(id, code){
+    if (BUILTIN_DATE_FMTS.has(id)) return true;
+    if (code){
+      const c = code.toLowerCase();
+      if (c === 'general' || c.indexOf('%') !== -1) return false;
+      if (/[hmsdy]/.test(c)) return true;
+    }
+    return false;
+  }
+
+  function parseStyles(str){
+    if (!str) return [];
+    const doc = xml(str);
+    const numFmts = {};
+    const nfNodes = doc.getElementsByTagName('numFmt');
+    for (let i=0;i<nfNodes.length;i++){
+      numFmts[nfNodes[i].getAttribute('numFmtId')] = nfNodes[i].getAttribute('formatCode');
+    }
+    const xfs = [];
+    const cellXfsParent = doc.getElementsByTagName('cellXfs')[0];
+    if (cellXfsParent){
+      const xfNodes = cellXfsParent.getElementsByTagName('xf');
+      for (let i=0;i<xfNodes.length;i++){
+        const id = parseInt(xfNodes[i].getAttribute('numFmtId')||'0',10);
+        xfs.push({ isDate: isDateFmt(id, numFmts[id]) });
+      }
+    }
+    return xfs;
+  }
+
+  function excelSerialToDate(serial){
+    const utcMs = Math.round((serial - 25569) * 86400 * 1000);
+    const d = new Date(utcMs);
+    return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), d.getUTCHours(), d.getUTCMinutes(), Math.round(d.getUTCSeconds()));
+  }
+
+  function colOf(ref){ const m = ref && ref.match(/^([A-Z]+)\d+$/); return m ? m[1] : null; }
+
+  function parseSheetRows(str, sharedStrings, styleXfs){
+    const doc = xml(str);
+    const rowEls = doc.getElementsByTagName('row');
+    const rows = [];
+    for (let i=0;i<rowEls.length;i++){
+      const cellEls = rowEls[i].getElementsByTagName('c');
+      const rowObj = {};
+      for (let j=0;j<cellEls.length;j++){
+        const c = cellEls[j];
+        const col = colOf(c.getAttribute('r'));
+        if (!col) continue;
+        const t = c.getAttribute('t');
+        let value = null;
+        if (t === 's'){
+          const vEl = c.getElementsByTagName('v')[0];
+          const idx = vEl ? parseInt(vEl.textContent,10) : -1;
+          value = sharedStrings[idx] !== undefined ? sharedStrings[idx] : '';
+        } else if (t === 'inlineStr'){
+          const isEl = c.getElementsByTagName('is')[0];
+          value = isEl ? isEl.textContent : '';
+        } else if (t === 'str' || t === 'b'){
+          const vEl = c.getElementsByTagName('v')[0];
+          value = vEl ? vEl.textContent : '';
+        } else {
+          const vEl = c.getElementsByTagName('v')[0];
+          if (vEl && vEl.textContent !== ''){
+            const num = parseFloat(vEl.textContent);
+            const sIdx = c.getAttribute('s');
+            const xf = sIdx !== null ? styleXfs[parseInt(sIdx,10)] : null;
+            value = (xf && xf.isDate) ? excelSerialToDate(num) : num;
+          }
+        }
+        rowObj[col] = value;
+      }
+      rows.push(rowObj);
+    }
+    return rows;
+  }
+
+  function rowsToObjects(rows){
+    if (!rows.length) return [];
+    const header = rows[0];
+    const cols = Object.keys(header);
+    const out = [];
+    for (let i=1;i<rows.length;i++){
+      const r = rows[i];
+      const obj = {};
+      let hasAny = false;
+      cols.forEach(col => {
+        const key = header[col];
+        if (key === null || key === undefined || key === '') return;
+        const v = (r[col] === undefined) ? null : r[col];
+        obj[key] = v;
+        if (v !== null && v !== '') hasAny = true;
+      });
+      if (hasAny) out.push(obj);
+    }
+    return out;
+  }
+
+  async function readWorkbook(arrayBuffer){
+    const { extract } = await unzip(arrayBuffer);
+    const workbookXml = await extract('xl/workbook.xml');
+    if (!workbookXml) throw new Error('Not a valid .xlsx file (missing workbook.xml)');
+    const relsXml = await extract('xl/_rels/workbook.xml.rels');
+    const sharedStringsXml = await extract('xl/sharedStrings.xml');
+    const stylesXml = await extract('xl/styles.xml');
+
+    const wbDoc = xml(workbookXml);
+    const sheetEls = wbDoc.getElementsByTagName('sheet');
+    const sheetsMeta = [];
+    for (let i=0;i<sheetEls.length;i++){
+      const name = sheetEls[i].getAttribute('name');
+      const rId = sheetEls[i].getAttribute('r:id') || sheetEls[i].getAttribute('relationships:id');
+      sheetsMeta.push({ name, rId });
+    }
+
+    const relMap = {};
+    if (relsXml){
+      const relsDoc = xml(relsXml);
+      const relEls = relsDoc.getElementsByTagName('Relationship');
+      for (let i=0;i<relEls.length;i++) relMap[relEls[i].getAttribute('Id')] = relEls[i].getAttribute('Target');
+    }
+
+    const sharedStrings = parseSharedStrings(sharedStringsXml);
+    const styleXfs = parseStyles(stylesXml);
+
+    const SheetNames = sheetsMeta.map(s=>s.name);
+    const sheets = {};
+    for (const meta of sheetsMeta){
+      let target = relMap[meta.rId];
+      if (!target) continue;
+      target = target.replace(/^\.?\//,'');
+      const path = target.startsWith('xl/') ? target : ('xl/'+target);
+      const sheetXml = await extract(path);
+      if (!sheetXml) continue;
+      const rows = parseSheetRows(sheetXml, sharedStrings, styleXfs);
+      sheets[meta.name] = rowsToObjects(rows);
+    }
+    return { SheetNames, sheets };
+  }
+
+  return { readWorkbook };
+})();
+</script>
+<script>
+(function(){
+  'use strict';
+
+  // ================= Live data source (Google Sheet via Apps Script) =================
+  // Paste the Web App URL you get after deploying the Apps Script (Code.gs) here.
+  // Leave as '' to keep using the sample data / manual Excel import only.
+  const CONFIG = {
+    GOOGLE_SHEET_API_URL: 'PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE'
+  };
+
+  // ================= Utilities (shared with data import) =================
+  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function chartColors(){
+    return {
+      text: cssVar('--text-dim'), mute: cssVar('--text-mute'), grid: cssVar('--border-soft'),
+      brand: cssVar('--brand'), amber: cssVar('--amber'), red: cssVar('--red'), blue: cssVar('--blue'),
+      panel: cssVar('--panel')
+    };
+  }
+
+  const PRIORITY_ORDER = ['High','Medium','Low'];
+  const PRIORITY_KEY = {High:'high', Medium:'medium', Low:'low'};
+
+  function parseThaiDate(s){
+    if (!s) return null;
+    if (s instanceof Date && !isNaN(s)) {
+      const pad = n => String(n).padStart(2,'0');
+      return `${s.getFullYear()}-${pad(s.getMonth()+1)}-${pad(s.getDate())} ${pad(s.getHours())}:${pad(s.getMinutes())}`;
+    }
+    const str = String(s).trim();
+    const m = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/);
+    if (m) {
+      const [, d, mo, y, h, mi] = m;
+      return `${y}-${mo.padStart(2,'0')}-${d.padStart(2,'0')} ${h.padStart(2,'0')}:${mi}`;
+    }
+    // fallback: try native Date parse
+    const dt = new Date(str);
+    if (!isNaN(dt)) {
+      const pad = n => String(n).padStart(2,'0');
+      return `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())} ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+    }
+    return null;
+  }
+
+  function toNum(v){
+    if (v === null || v === undefined || v === '') return 0;
+    const n = parseFloat(v);
+    return isNaN(n) ? 0 : n;
+  }
+
+  function priorityLabel(v){
+    const s = String(v).trim();
+    if (s === '1' || /^high$/i.test(s)) return 'High';
+    if (s === '2' || /^medium$/i.test(s) || /^med$/i.test(s)) return 'Medium';
+    if (s === '3' || /^low$/i.test(s)) return 'Low';
+    return s || 'Unknown';
+  }
+
+  function isCompleteStatus(s){
+    return /complete/i.test(String(s || ''));
+  }
+
+  // Extract minutes-of-day from a "Response Time" style value:
+  // in the source file this column stores the elapsed time between the
+  // logged request and the actual work start, encoded as a time-of-day.
+  function responseMinutesFromCell(v){
+    if (v === null || v === undefined || v === '') return null;
+    if (v instanceof Date && !isNaN(v)) {
+      return v.getHours()*60 + v.getMinutes() + v.getSeconds()/60;
+    }
+    if (typeof v === 'number') {
+      // Excel serial date/time: fractional part = time of day
+      const frac = v - Math.floor(v);
+      return Math.round(frac*24*60*100)/100;
+    }
+    // try HH:MM:SS text
+    const m = String(v).match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+    if (m) return parseInt(m[1],10)*60 + parseInt(m[2],10) + (m[3]?parseInt(m[3],10):0)/60;
+    return null;
+  }
+
+  // ================= Data normalization =================
+  function normalizeRows(rows){
+    return rows.map(r => {
+      const wo = r['Workorder'];
+      if (!wo) return null;
+      const start = parseThaiDate(r['ActWorkStart']);
+      return {
+        wo: String(wo),
+        eq: (r['EquipmentDesc'] || 'Unspecified').toString().trim(),
+        eqType: (r['EquipmentTypeDesc'] || 'Unspecified').toString().trim(),
+        priority: priorityLabel(r['Priority']),
+        status: (r['Status'] || 'Unknown').toString().trim(),
+        repairTime: toNum(r['TotalRepairTime']),
+        downtime: toNum(r['DownTime']),
+        responseMin: responseMinutesFromCell(r['Response Time']),
+        matCost: toNum(r['ActMatCost']),
+        rootCause: (r['Root cause'] || 'Unspecified').toString().trim(),
+        failureDesc: (r['FailureDescription'] || '').toString().trim().replace(/_x000D_/g,''),
+        solution: (r['Solution'] || '').toString().trim(),
+        start: start,
+        month: start ? start.slice(0,7) : null
+      };
+    }).filter(Boolean);
+  }
+
+  // ================= State =================
+  let WORKORDERS = normalizeRows(RAW_SAMPLE_ROWS);
+
+  const state = {
+    equipment: '',
+    eqTypes: new Set(),
+    priorities: new Set(),
+    statuses: new Set(),
+    search: '',
+    dateFrom: '',
+    dateTo: '',
+    trendGroup: 'month',
+    sortKey: 'start',
+    sortDir: 'desc'
+  };
+
+  function resetStateFilters(){
+    state.equipment = '';
+    state.eqTypes.clear();
+    state.priorities.clear();
+    state.statuses.clear();
+    state.search = '';
+    state.dateFrom = '';
+    state.dateTo = '';
+  }
+
+  // ================= Filtering =================
+  function filteredData(){
+    return WORKORDERS.filter(d => {
+      if (state.equipment && d.eq !== state.equipment) return false;
+      if (state.eqTypes.size && !state.eqTypes.has(d.eqType)) return false;
+      if (state.priorities.size && !state.priorities.has(d.priority)) return false;
+      if (state.statuses.size && !state.statuses.has(d.status)) return false;
+      if (state.dateFrom && (!d.start || d.start.slice(0,10) < state.dateFrom)) return false;
+      if (state.dateTo && (!d.start || d.start.slice(0,10) > state.dateTo)) return false;
+      if (state.search) {
+        const s = state.search.toLowerCase();
+        const hay = (d.wo+' '+d.eq+' '+d.rootCause+' '+d.failureDesc+' '+d.solution).toLowerCase();
+        if (!hay.includes(s)) return false;
+      }
+      return true;
+    });
+  }
+
+  // ================= Filter controls =================
+  function renderEquipmentSelect(){
+    const sel = document.getElementById('eqSelect');
+    const counts = {};
+    WORKORDERS.forEach(d => { counts[d.eq] = (counts[d.eq]||0)+1; });
+    const eqs = Object.keys(counts).sort((a,b)=>counts[b]-counts[a]);
+    const prevVal = state.equipment;
+    sel.innerHTML = '';
+    const optAll = document.createElement('option');
+    optAll.value = '';
+    optAll.textContent = `All Equipment (${WORKORDERS.length})`;
+    sel.appendChild(optAll);
+    eqs.forEach(eq => {
+      const opt = document.createElement('option');
+      opt.value = eq;
+      opt.textContent = `${eq} (${counts[eq]})`;
+      sel.appendChild(opt);
+    });
+    sel.value = eqs.includes(prevVal) ? prevVal : '';
+    state.equipment = sel.value;
+  }
+  document.getElementById('eqSelect').addEventListener('change', e => {
+    state.equipment = e.target.value;
+    renderAll(false);
+  });
+
+  function renderChips(){
+    const eqTypes = Array.from(new Set(WORKORDERS.map(d=>d.eqType))).sort();
+    const eqBox = document.getElementById('eqTypeChips');
+    eqBox.innerHTML = '';
+    eqTypes.forEach(t => {
+      const chip = document.createElement('button');
+      chip.className = 'chip' + (state.eqTypes.has(t) ? ' active' : '');
+      chip.textContent = t;
+      chip.onclick = () => { state.eqTypes.has(t) ? state.eqTypes.delete(t) : state.eqTypes.add(t); renderAll(false); };
+      eqBox.appendChild(chip);
+    });
+
+    const prBox = document.getElementById('priorityChips');
+    prBox.innerHTML = '';
+    PRIORITY_ORDER.forEach(p => {
+      const chip = document.createElement('button');
+      chip.className = 'chip' + (state.priorities.has(p) ? ' active pri-'+PRIORITY_KEY[p] : '');
+      chip.textContent = p;
+      chip.onclick = () => { state.priorities.has(p) ? state.priorities.delete(p) : state.priorities.add(p); renderAll(false); };
+      prBox.appendChild(chip);
+    });
+
+    const statuses = Array.from(new Set(WORKORDERS.map(d=>d.status))).sort();
+    const stBox = document.getElementById('statusChips');
+    stBox.innerHTML = '';
+    statuses.forEach(s => {
+      const chip = document.createElement('button');
+      const cls = isCompleteStatus(s) ? '' : ' st-open';
+      chip.className = 'chip' + (state.statuses.has(s) ? ' active'+cls : '');
+      chip.textContent = s;
+      chip.onclick = () => { state.statuses.has(s) ? state.statuses.delete(s) : state.statuses.add(s); renderAll(false); };
+      stBox.appendChild(chip);
+    });
+  }
+
+  document.getElementById('resetFilters').onclick = () => {
+    resetStateFilters();
+    document.getElementById('searchBox').value = '';
+    document.getElementById('dateFrom').value = '';
+    document.getElementById('dateTo').value = '';
+    renderAll(true);
+  };
+  document.getElementById('searchBox').addEventListener('input', e => {
+    state.search = e.target.value.trim();
+    renderTable(filteredData());
+  });
+  document.getElementById('dateFrom').addEventListener('change', e => { state.dateFrom = e.target.value; renderAll(false); });
+  document.getElementById('dateTo').addEventListener('change', e => { state.dateTo = e.target.value; renderAll(false); });
+
+  // ================= Gauge helpers (SVG) =================
+  function scoreColor(score){
+    if (score >= 85) return 'var(--brand)';
+    if (score >= 60) return 'var(--amber)';
+    return 'var(--red)';
+  }
+
+  // Full-circle progress ring (used for the top CM Compliance panel)
+  function ringGaugeSVG(value, size, strokeWidth, color){
+    const r = (size - strokeWidth) / 2;
+    const cx = size/2, cy = size/2;
+    const c = 2 * Math.PI * r;
+    const v = Math.max(0, Math.min(100, value));
+    const offset = c - (v/100) * c;
+    return `<svg viewBox="0 0 ${size} ${size}">
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--border)" stroke-width="${strokeWidth}"/>
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="${strokeWidth}"
+        stroke-linecap="round" stroke-dasharray="${c}" stroke-dashoffset="${offset}"
+        transform="rotate(-90 ${cx} ${cy})" style="transition:stroke-dashoffset .4s ease;"/>
+    </svg>`;
+  }
+
+  // Dome (semicircle) gauge used on the equipment cards
+  function polarPoint(cx,cy,r,angleDeg){
+    const a = angleDeg * Math.PI/180;
+    return { x: cx + r*Math.cos(a), y: cy + r*Math.sin(a) };
+  }
+  function describeArc(cx,cy,r,startAngle,endAngle){
+    const start = polarPoint(cx,cy,r,startAngle);
+    const end = polarPoint(cx,cy,r,endAngle);
+    const largeArc = (endAngle - startAngle) > 180 ? 1 : 0;
+    return `M ${start.x.toFixed(2)} ${start.y.toFixed(2)} A ${r} ${r} 0 ${largeArc} 1 ${end.x.toFixed(2)} ${end.y.toFixed(2)}`;
+  }
+  function domeGaugeSVG(value, color){
+    const cx=60, cy=58, r=46, sw=12;
+    const v = Math.max(0, Math.min(100, value));
+    const endAngle = 180 + (v/100)*180;
+    const trackPath = describeArc(cx,cy,r,180,360);
+    const valuePath = describeArc(cx,cy,r,180,endAngle);
+    return `<svg viewBox="0 0 120 66">
+      <path d="${trackPath}" fill="none" stroke="var(--border)" stroke-width="${sw}" stroke-linecap="round"/>
+      ${v>0 ? `<path d="${valuePath}" fill="none" stroke="${color}" stroke-width="${sw}" stroke-linecap="round"/>` : ''}
+    </svg>`;
+  }
+
+  // ================= Header: bell + period =================
+  function renderHeaderBits(data){
+    const backlog = data.filter(d => !isCompleteStatus(d.status)).length;
+    const badge = document.getElementById('bellBadge');
+    badge.textContent = backlog;
+    badge.style.display = backlog > 0 ? 'flex' : 'none';
+  }
+  document.getElementById('bellBtn').addEventListener('click', () => {
+    resetStateFilters();
+    const allStatuses = Array.from(new Set(WORKORDERS.map(d=>d.status)));
+    allStatuses.filter(s => !isCompleteStatus(s)).forEach(s => state.statuses.add(s));
+    renderAll(true);
+    document.getElementById('tableCount').closest('.panel').scrollIntoView({behavior:'smooth', block:'start'});
+  });
+
+  function renderPeriod(){
+    const dates = WORKORDERS.map(d=>d.start).filter(Boolean).sort();
+    let label = '–';
+    if (dates.length){
+      const latest = new Date(dates[dates.length-1].replace(' ','T'));
+      label = isNaN(latest) ? dates[dates.length-1].slice(0,10)
+        : latest.toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
+    }
+    document.getElementById('periodLabel').textContent = label;
+    document.getElementById('periodCount').textContent = WORKORDERS.length.toLocaleString('en-US');
+  }
+
+  // ================= Header menu =================
+  const menuBtn = document.getElementById('menuBtn');
+  const menuDropdown = document.getElementById('menuDropdown');
+  menuBtn.addEventListener('click', (e) => { e.stopPropagation(); menuDropdown.classList.toggle('open'); });
+  document.addEventListener('click', (e) => { if (!menuDropdown.contains(e.target) && e.target!==menuBtn) menuDropdown.classList.remove('open'); });
+
+  document.getElementById('themeToggleBtn').addEventListener('click', () => {
+    const root = document.documentElement;
+    const current = root.getAttribute('data-theme') ||
+      (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    root.setAttribute('data-theme', current === 'dark' ? 'light' : 'dark');
+    menuDropdown.classList.remove('open');
+    renderAll(false);
+  });
+
+  document.getElementById('refreshBtn').addEventListener('click', (e) => {
+    const btn = e.currentTarget;
+    btn.classList.add('spin');
+    setTimeout(()=>btn.classList.remove('spin'), 700);
+    if (sheetConfigured()) loadFromGoogleSheet(false);
+    else renderAll(true);
+  });
+
+  // ================= Shared stat helpers =================
+  function statsFor(data){
+    const total = data.length;
+    const completed = data.filter(d => isCompleteStatus(d.status)).length;
+    const compliance = total ? (completed/total*100) : 0;
+    const totalDowntime = data.reduce((a,d)=>a+d.downtime,0);
+    const totalRepairHrs = data.reduce((a,d)=>a+d.repairTime,0);
+    const respVals = data.filter(d=>d.responseMin!==null).map(d=>d.responseMin);
+    const avgResponse = respVals.length ? respVals.reduce((a,b)=>a+b,0)/respVals.length : null;
+    const highCount = data.filter(d=>d.priority==='High').length;
+    const highShare = total ? highCount/total*100 : 0;
+    return { total, completed, compliance, totalDowntime, totalRepairHrs, avgResponse, highCount, highShare, backlog: total-completed };
+  }
+
+  // Split data (sorted by date) into two chronological halves for trend comparisons
+  function splitHalves(data){
+    const withDate = data.filter(d=>d.start).sort((a,b)=> a.start < b.start ? -1 : 1);
+    const n = withDate.length;
+    if (n < 4) return null;
+    const mid = Math.floor(n/2);
+    return { h1: withDate.slice(0, mid), h2: withDate.slice(mid) };
+  }
+
+  function pctDelta(a,b){
+    if (a === 0) return b === 0 ? 0 : 100;
+    return ((b-a)/a)*100;
+  }
+
+  const COMPLIANCE_TARGET = 90;
+
+  // ================= Overview: compliance gauge =================
+  function renderComplianceGauge(data){
+    const s = statsFor(data);
+    const halves = splitHalves(data);
+    document.getElementById('complianceGauge').innerHTML =
+      ringGaugeSVG(s.compliance, 180, 15, scoreColor(s.compliance >= COMPLIANCE_TARGET ? 90 : (s.compliance>=70?70:40)));
+    document.getElementById('complianceGaugeCenter').innerHTML =
+      `<div class="gv num">${s.compliance.toFixed(0)}%</div><div class="gl">${s.completed} of ${s.total} complete</div>`;
+    document.getElementById('complianceTargetLabel').textContent = `Target ${COMPLIANCE_TARGET}%`;
+
+    const pill = document.getElementById('complianceTrendPill');
+    if (halves){
+      const c1 = statsFor(halves.h1).compliance, c2 = statsFor(halves.h2).compliance;
+      const d = c2 - c1;
+      pill.className = 'trend-pill ' + (d >= 0 ? 'up':'down');
+      pill.innerHTML = (d>=0
+        ? '<svg viewBox="0 0 24 24" fill="none"><path d="M5 15l7-7 7 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        : '<svg viewBox="0 0 24 24" fill="none"><path d="M5 9l7 7 7-7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>')
+        + Math.abs(d).toFixed(1) + ' pts';
+    } else {
+      pill.className = 'trend-pill';
+      pill.style.background = 'var(--panel-2)';
+      pill.textContent = 'vs prev n/a';
+    }
+  }
+
+  // ================= Overview: insights =================
+  function insightRow(title, deltaText, direction, tag){
+    const iconUp = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 15l7-7 7 7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const iconDown = '<svg viewBox="0 0 24 24" fill="none"><path d="M5 9l7 7 7-7" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    const iconFlat = '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>';
+    const icon = direction==='up'?iconUp:(direction==='down'?iconDown:iconFlat);
+    const cls = direction==='up'?'up':(direction==='down'?'down':'flat');
+    return `<div class="insight-item">
+      <div class="insight-icon ${cls}">${icon}</div>
+      <div class="insight-body">
+        <div class="insight-title">${title}</div>
+        <div class="insight-meta"><span class="tag">${tag}</span>${deltaText?`<span class="delta ${cls==='flat'?'':cls}">${deltaText}</span>`:''}</div>
+      </div>
+    </div>`;
+  }
+
+  function renderInsights(data){
+    const list = document.getElementById('insightList');
+    const s = statsFor(data);
+    const halves = splitHalves(data);
+    const rows = [];
+
+    if (halves){
+      const s1 = statsFor(halves.h1), s2 = statsFor(halves.h2);
+
+      const compDelta = s2.compliance - s1.compliance;
+      rows.push(insightRow(
+        `CM compliance is running at ${s.compliance.toFixed(0)}%`,
+        `${compDelta>=0?'+':''}${compDelta.toFixed(1)} pts`, compDelta>=0?'up':'down', 'vs. previous period'
+      ));
+
+      const dtDelta = pctDelta(s1.totalDowntime, s2.totalDowntime);
+      rows.push(insightRow(
+        `Total downtime ${dtDelta>=0?'increased':'decreased'} to ${s.totalDowntime.toFixed(1)} hrs`,
+        `${dtDelta>=0?'+':''}${dtDelta.toFixed(0)}%`, dtDelta<=0?'up':'down', 'vs. previous period'
+      ));
+
+      if (s1.avgResponse!==null && s2.avgResponse!==null){
+        const rDelta = pctDelta(s1.avgResponse, s2.avgResponse);
+        rows.push(insightRow(
+          `Avg response time is ${s.avgResponse===null?'–':s.avgResponse.toFixed(0)+' min'}`,
+          `${rDelta>=0?'+':''}${rDelta.toFixed(0)}%`, rDelta<=0?'up':'down', 'vs. previous period'
+        ));
+      }
+
+      const hpDelta = s2.highShare - s1.highShare;
+      rows.push(insightRow(
+        `${s.highShare.toFixed(0)}% of work orders are High priority`,
+        `${hpDelta>=0?'+':''}${hpDelta.toFixed(1)} pts`, hpDelta<=0?'up':'down', 'vs. previous period'
+      ));
+    } else {
+      rows.push(insightRow(`CM compliance is running at ${s.compliance.toFixed(0)}%`, '', 'flat', `${s.total} work orders in view`));
+      rows.push(insightRow(`Total downtime is ${s.totalDowntime.toFixed(1)} hrs`, '', 'flat', 'not enough history for a trend'));
+    }
+
+    const eqStats = equipmentStats(data);
+    if (eqStats.length){
+      const top = [...eqStats].sort((a,b)=>b.count-a.count)[0];
+      rows.push(insightRow(`${truncLabel(top.eq,34)} logged the most repairs`, `${top.count} orders`, 'flat', 'current selection'));
+    }
+    if (s.backlog > 0){
+      rows.push(insightRow(`${s.backlog} work order${s.backlog===1?'':'s'} still open`, '', 'flat', 'needs follow-up'));
+    }
+
+    list.innerHTML = rows.slice(0,5).join('');
+  }
+
+  // ================= Trend chart (normalized multi-line) =================
+  const TREND_SERIES_DEF = [
+    {key:'count',   name:'Work Orders',   color:'--blue'},
+    {key:'mttr',    name:'MTTR (hrs)',    color:'--amber'},
+    {key:'downtime',name:'Downtime (hrs)',color:'--red'},
+    {key:'response',name:'Response (min)',color:'--purple'}
+  ];
+
+  function isoWeekStart(dateStr){
+    const d = new Date(dateStr.replace(' ','T'));
+    const day = (d.getDay()+6)%7; // Monday=0
+    d.setDate(d.getDate()-day);
+    const pad = n=>String(n).padStart(2,'0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  }
+  function monthLabel(m){
+    if (!m) return '–';
+    const [y,mo] = m.split('-');
+    const names = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return names[parseInt(mo,10)-1] + ' ' + y.slice(2);
+  }
+
+  function groupKey(d, mode){
+    if (!d.start) return null;
+    if (mode === 'day') return d.start.slice(0,10);
+    if (mode === 'week') return isoWeekStart(d.start);
+    return d.month;
+  }
+  function groupLabel(key, mode){
+    if (!key) return '–';
+    if (mode === 'month') return monthLabel(key);
+    const parts = key.split('-');
+    return parts[1]+'/'+parts[2];
+  }
+
+  function renderTrendLegend(){
+    const box = document.getElementById('trendLegend');
+    box.innerHTML = TREND_SERIES_DEF.map(s =>
+      `<div class="legend-item"><span class="legend-dot" style="background:var(${s.color});"></span>${s.name}</div>`
+    ).join('');
+  }
+
+  let trendTip = null;
+  function ensureTrendTip(){
+    if (!trendTip){
+      trendTip = document.createElement('div');
+      trendTip.style.cssText = 'position:fixed; pointer-events:none; z-index:1000; font-size:12px; padding:8px 10px; border-radius:8px; display:none; max-width:240px; line-height:1.5; box-shadow:0 8px 24px rgba(20,30,45,0.18);';
+      document.body.appendChild(trendTip);
+    }
+    return trendTip;
+  }
+
+  let trendChartState = null;
+  function renderTrendChart(data){
+    const mode = state.trendGroup;
+    const by = {};
+    data.forEach(d => {
+      const k = groupKey(d, mode);
+      if (!k) return;
+      by[k] = by[k] || {count:0, hrs:0, downtime:0, resp:[]};
+      by[k].count++; by[k].hrs += d.repairTime; by[k].downtime += d.downtime;
+      if (d.responseMin !== null) by[k].resp.push(d.responseMin);
+    });
+    const keys = Object.keys(by).sort();
+    const raw = {
+      count: keys.map(k=>by[k].count),
+      mttr: keys.map(k=> by[k].count ? by[k].hrs/by[k].count : 0),
+      downtime: keys.map(k=>by[k].downtime),
+      response: keys.map(k=> by[k].resp.length ? by[k].resp.reduce((a,b)=>a+b,0)/by[k].resp.length : 0)
+    };
+    const labels = keys.map(k=>groupLabel(k, mode));
+
+    const c = chartColors();
+    const canvas = document.getElementById('trendChart');
+    function setupCanvas(){
+      const parent = canvas.parentElement;
+      const rect = parent.getBoundingClientRect();
+      const ratio = window.devicePixelRatio || 1;
+      const w = Math.max(1, Math.round(rect.width)), h = Math.max(1, Math.round(rect.height));
+      canvas.width = Math.round(w*ratio); canvas.height = Math.round(h*ratio);
+      canvas.style.width = w+'px'; canvas.style.height = h+'px';
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(ratio,0,0,ratio,0,0);
+      return {ctx, width:w, height:h};
+    }
+
+    let layout = null, hoverIndex = -1;
+    function draw(){
+      const {ctx,width,height} = setupCanvas();
+      ctx.clearRect(0,0,width,height);
+      const padL=8, padR=8, padT=14, padB=26;
+      const chartW = Math.max(10,width-padL-padR), chartH = Math.max(10,height-padT-padB);
+      const n = Math.max(1, labels.length);
+
+      const gridDiv = 4;
+      ctx.font='10.5px Inter, sans-serif';
+      for (let i=0;i<=gridDiv;i++){
+        const y = padT + chartH - chartH*i/gridDiv;
+        ctx.strokeStyle = c.grid; ctx.lineWidth=1;
+        ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(padL+chartW,y); ctx.stroke();
+      }
+
+      if (!keys.length){
+        ctx.fillStyle = c.mute; ctx.textAlign='center'; ctx.font='12px Inter, sans-serif';
+        ctx.fillText('No data in this range', width/2, height/2);
+        layout = null; return;
+      }
+
+      const slot = chartW / n;
+      TREND_SERIES_DEF.forEach(sd => {
+        const vals = raw[sd.key];
+        const max = Math.max(1, ...vals);
+        const color = cssVar(sd.color);
+        const pts = vals.map((v,i)=>({
+          x: padL + slot*i + slot/2,
+          y: padT + chartH - (v/max)*chartH
+        }));
+        ctx.strokeStyle = color; ctx.lineWidth = 2.2; ctx.beginPath();
+        pts.forEach((p,i)=> i===0?ctx.moveTo(p.x,p.y):ctx.lineTo(p.x,p.y));
+        ctx.stroke();
+        pts.forEach((p,i)=>{
+          ctx.fillStyle = color;
+          ctx.beginPath(); ctx.arc(p.x,p.y, i===hoverIndex?4.2:2.6, 0, Math.PI*2); ctx.fill();
+        });
+      });
+
+      if (hoverIndex !== -1){
+        const cx = padL + slot*hoverIndex + slot/2;
+        ctx.save(); ctx.strokeStyle = c.grid; ctx.setLineDash([3,3]);
+        ctx.beginPath(); ctx.moveTo(cx,padT); ctx.lineTo(cx,padT+chartH); ctx.stroke(); ctx.restore();
+      }
+
+      ctx.fillStyle = c.mute; ctx.textAlign='center'; ctx.textBaseline='top'; ctx.font='11px Inter, sans-serif';
+      const labelStep = Math.max(1, Math.ceil(n/10));
+      labels.forEach((l,i)=>{
+        if (i%labelStep!==0 && i!==n-1) return;
+        const cx = padL + slot*i + slot/2;
+        ctx.fillText(l, cx, padT+chartH+8);
+      });
+
+      layout = {padL, padT, chartW, chartH, slot, n};
+    }
+
+    function onMove(e){
+      if (!layout) return;
+      const rect = canvas.getBoundingClientRect();
+      const mx = e.clientX-rect.left;
+      let idx = Math.round((mx-layout.padL-layout.slot/2)/layout.slot);
+      idx = Math.max(0, Math.min(layout.n-1, idx));
+      if (idx !== hoverIndex){ hoverIndex = idx; draw(); }
+      const tip = ensureTrendTip();
+      tip.style.background = c.panel; tip.style.border = '1px solid '+c.grid; tip.style.color = c.text;
+      let html = `<div style="font-weight:600;margin-bottom:4px;">${labels[idx]}</div>`;
+      TREND_SERIES_DEF.forEach(sd=>{
+        const v = raw[sd.key][idx];
+        html += `<div style="display:flex;align-items:center;gap:6px;"><span style="width:7px;height:7px;border-radius:50%;background:${cssVar(sd.color)};display:inline-block;"></span>${sd.name}: ${v.toFixed(sd.key==='count'?0:1)}</div>`;
+      });
+      tip.innerHTML = html;
+      tip.style.display='block';
+      tip.style.left=(e.clientX+14)+'px'; tip.style.top=(e.clientY+14)+'px';
+    }
+    function onLeave(){ if(hoverIndex!==-1){hoverIndex=-1; draw();} if(trendTip) trendTip.style.display='none'; }
+
+    if (trendChartState) trendChartState.destroy();
+    canvas.addEventListener('mousemove', onMove);
+    canvas.addEventListener('mouseleave', onLeave);
+    const ro = new ResizeObserver(()=>draw());
+    ro.observe(canvas.parentElement);
+    draw();
+    trendChartState = { destroy(){
+      canvas.removeEventListener('mousemove', onMove);
+      canvas.removeEventListener('mouseleave', onLeave);
+      ro.disconnect();
+      if (trendTip) trendTip.style.display='none';
+    }};
+  }
+
+  document.getElementById('trendSeg').addEventListener('click', (e)=>{
+    const btn = e.target.closest('button[data-g]');
+    if (!btn) return;
+    state.trendGroup = btn.getAttribute('data-g');
+    document.querySelectorAll('#trendSeg button').forEach(b=>b.classList.toggle('active', b===btn));
+    renderTrendChart(filteredData());
+  });
+
+  // ================= Per-equipment stats (used by cards + breakdown charts) =================
+  function equipmentStats(data){
+    const by = {};
+    data.forEach(d => {
+      by[d.eq] = by[d.eq] || {count:0, hrs:0, downtime:0, resp:[], cost:0};
+      by[d.eq].count++;
+      by[d.eq].hrs += d.repairTime;
+      by[d.eq].downtime += d.downtime;
+      by[d.eq].cost += d.matCost;
+      if (d.responseMin !== null) by[d.eq].resp.push(d.responseMin);
+    });
+    return Object.entries(by).map(([eq,s]) => ({
+      eq, count:s.count, mttr: s.count ? s.hrs/s.count : 0, downtime:s.downtime,
+      avgDowntime: s.count ? s.downtime/s.count : 0,
+      resp: s.resp.length ? s.resp.reduce((a,b)=>a+b,0)/s.resp.length : null, cost:s.cost
+    }));
+  }
+
+  function truncLabel(l, n){ return l.length > n ? l.slice(0,n-1)+'…' : l; }
+
+  // ================= Equipment health gauge cards =================
+  function renderMachineCards(data){
+    const stats = equipmentStats(data);
+    const box = document.getElementById('machineScroll');
+    if (!stats.length){
+      box.innerHTML = '<div style="color:var(--text-mute); font-size:13px; padding:20px 4px;">No equipment matches the current filters.</div>';
+      return;
+    }
+    const maxAvgDowntime = Math.max(0.0001, ...stats.map(s=>s.avgDowntime));
+    const top = [...stats].sort((a,b)=>b.count-a.count).slice(0,10);
+    const halves = splitHalves(data);
+
+    box.innerHTML = top.map(s => {
+      const score = Math.max(0, Math.min(100, 100 - (s.avgDowntime/maxAvgDowntime)*100));
+      const color = scoreColor(score);
+
+      let trendHtml = `<div class="machine-trend" style="color:var(--text-mute); font-weight:500;">not enough history</div>`;
+      if (halves){
+        const eqH1 = equipmentStats(halves.h1.filter(d=>d.eq===s.eq));
+        const eqH2 = equipmentStats(halves.h2.filter(d=>d.eq===s.eq));
+        if (eqH1.length && eqH2.length){
+          const maxDt = Math.max(0.0001, eqH1[0].avgDowntime, eqH2[0].avgDowntime, maxAvgDowntime);
+          const score1 = 100 - (eqH1[0].avgDowntime/maxDt)*100;
+          const score2 = 100 - (eqH2[0].avgDowntime/maxDt)*100;
+          const d = score2-score1;
+          const arrow = d>=0
+            ? '<svg viewBox="0 0 24 24" fill="none"><path d="M5 15l7-7 7 7" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+            : '<svg viewBox="0 0 24 24" fill="none"><path d="M5 9l7 7 7-7" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+          trendHtml = `<div class="machine-trend ${d>=0?'up':'down'}">${arrow}${Math.abs(d).toFixed(0)}% ${d>=0?'better':'worse'}</div>`;
+        }
+      }
+
+      return `<div class="machine-card${state.equipment===s.eq?' is-active':''}" style="--card-accent:${color};" data-eq="${escapeAttr(s.eq)}">
+        <div class="machine-card-head">
+          <div class="machine-name">${truncLabel(s.eq, 30)}</div>
+          <div class="machine-dots">⋮</div>
+        </div>
+        <div class="machine-gauge">
+          ${domeGaugeSVG(score, color)}
+          <div class="machine-gauge-center"><div class="mv num">${score.toFixed(0)}%</div></div>
+        </div>
+        ${trendHtml}
+        <div class="machine-legend">
+          <div class="legend-item"><span class="legend-dot" style="background:${color};"></span>Score</div>
+          <div class="legend-item"><span class="legend-dot" style="background:var(--border);"></span>Target 85</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    box.querySelectorAll('.machine-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const eq = card.getAttribute('data-eq');
+        state.equipment = (state.equipment === eq) ? '' : eq;
+        document.getElementById('eqSelect').value = state.equipment;
+        renderAll(false);
+      });
+    });
+  }
+  function escapeAttr(s){ return String(s).replace(/"/g,'&quot;'); }
+
+  // ================= Breakdown-by-equipment bar charts =================
+  let eqFailureChart, eqMttrChart, eqDowntimeChart, eqResponseChart, causeChart;
+
+  function makeHBar(canvasId, labels, values, color, chartRef){
+    const c = chartColors();
+    if (chartRef) chartRef.destroy();
+    return Mini.hBarChart(document.getElementById(canvasId), {
+      labels: labels.map(l=>truncLabel(l,26)),
+      fullLabels: labels,
+      values, color, colors: c
+    });
+  }
+
+  function renderEquipmentCharts(data){
+    const c = chartColors();
+    const stats = equipmentStats(data);
+
+    const byCount = [...stats].sort((a,b)=>b.count-a.count).slice(0,8);
+    eqFailureChart = makeHBar('eqFailureChart', byCount.map(s=>s.eq), byCount.map(s=>s.count), c.blue, eqFailureChart);
+
+    const byMttr = [...stats].sort((a,b)=>b.mttr-a.mttr).slice(0,8);
+    eqMttrChart = makeHBar('eqMttrChart', byMttr.map(s=>s.eq), byMttr.map(s=>+s.mttr.toFixed(2)), c.amber, eqMttrChart);
+
+    const byDowntime = [...stats].sort((a,b)=>b.downtime-a.downtime).slice(0,8);
+    eqDowntimeChart = makeHBar('eqDowntimeChart', byDowntime.map(s=>s.eq), byDowntime.map(s=>+s.downtime.toFixed(2)), c.red, eqDowntimeChart);
+
+    const withResp = stats.filter(s=>s.resp!==null);
+    const byResp = [...withResp].sort((a,b)=>b.resp-a.resp).slice(0,8);
+    eqResponseChart = makeHBar('eqResponseChart', byResp.map(s=>s.eq), byResp.map(s=>+s.resp.toFixed(1)), cssVar('--purple'), eqResponseChart);
+
+    const sub = state.equipment ? `Showing: ${state.equipment}` : 'Ranked across all equipment (top 8 shown)';
+    document.getElementById('eqSectionSub2').textContent = sub;
+  }
+
+  function renderCauseChart(data){
+    const c = chartColors();
+    const counts = {};
+    data.forEach(d => { counts[d.rootCause] = (counts[d.rootCause]||0)+1; });
+    const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    if (causeChart) causeChart.destroy();
+    causeChart = Mini.hBarChart(document.getElementById('causeChart'), {
+      labels: sorted.map(x=>truncLabel(x[0],40)),
+      fullLabels: sorted.map(x=>x[0]),
+      values: sorted.map(x=>x[1]),
+      color: c.brand, colors: c
+    });
+  }
+
+  // ================= Table =================
+  function renderTable(data){
+    const tbody = document.getElementById('tableBody');
+    document.getElementById('tableCount').textContent = data.length + ' records';
+    const sorted = [...data].sort((a,b) => {
+      let va=a[state.sortKey], vb=b[state.sortKey];
+      if (va===null || va===undefined) va = typeof vb === 'number' ? -Infinity : '';
+      if (vb===null || vb===undefined) vb = typeof va === 'number' ? -Infinity : '';
+      if (typeof va === 'string') va = va.toLowerCase();
+      if (typeof vb === 'string') vb = vb.toLowerCase();
+      if (va<vb) return state.sortDir==='asc'?-1:1;
+      if (va>vb) return state.sortDir==='asc'?1:-1;
+      return 0;
+    });
+    if (!sorted.length){
+      tbody.innerHTML = '<tr class="empty-row"><td colspan="11">No work orders match the current filters</td></tr>';
+      return;
+    }
+    tbody.innerHTML = sorted.map(d => `
+      <tr>
+        <td class="wo-code">${d.wo}</td>
+        <td>${d.eq}</td>
+        <td><span class="badge ${PRIORITY_KEY[d.priority]||''}">${d.priority}</span></td>
+        <td><span class="badge ${isCompleteStatus(d.status)?'st-complete':'st-open'}">${d.status}</span></td>
+        <td>${d.rootCause}</td>
+        <td class="desc-cell">${d.failureDesc || '–'}</td>
+        <td class="num">${d.repairTime.toFixed(2)}</td>
+        <td class="num">${d.downtime.toFixed(2)}</td>
+        <td class="num">${d.responseMin===null?'–':d.responseMin.toFixed(0)}</td>
+        <td class="num">${d.matCost.toLocaleString('en-US')}</td>
+        <td>${d.start ? d.start.replace(' ',' · ') : '–'}</td>
+      </tr>
+    `).join('');
+  }
+
+  document.querySelectorAll('thead th[data-key]').forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.getAttribute('data-key');
+      if (state.sortKey === key) state.sortDir = state.sortDir==='asc'?'desc':'asc';
+      else { state.sortKey = key; state.sortDir = 'asc'; }
+      renderTable(filteredData());
+    });
+  });
+
+  // ================= Master render =================
+  function renderAll(rebuildControls){
+    if (rebuildControls) { renderEquipmentSelect(); }
+    renderChips();
+    const data = filteredData();
+    renderHeaderBits(data);
+    renderComplianceGauge(data);
+    renderTrendLegend();
+    renderTrendChart(data);
+    renderInsights(data);
+    renderMachineCards(data);
+    renderEquipmentCharts(data);
+    renderCauseChart(data);
+    renderTable(data);
+  }
+
+  // ================= Import handling =================
+  const fileInput = document.getElementById('fileInput');
+  const importBtn = document.getElementById('importBtn');
+  const resetDataBtn = document.getElementById('resetDataBtn');
+  const importStatus = document.getElementById('importStatus');
+  const sourceLabel = document.getElementById('sourceLabel');
+
+  importBtn.addEventListener('click', () => fileInput.click());
+
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    importStatus.textContent = `Reading ${file.name}…`;
+    const reader = new FileReader();
+    reader.onload = async (evt) => {
+      try {
+        const wb = await MiniXLSX.readWorkbook(evt.target.result);
+        const sheetName = wb.SheetNames.includes('Raw data') ? 'Raw data' : wb.SheetNames[0];
+        const rows = wb.sheets[sheetName] || [];
+        const normalized = normalizeRows(rows);
+        if (!normalized.length) throw new Error('No valid work order rows found (missing "Workorder" column?)');
+        WORKORDERS = normalized;
+        resetStateFilters();
+        document.getElementById('searchBox').value = '';
+        document.getElementById('dateFrom').value = '';
+        document.getElementById('dateTo').value = '';
+        importStatus.textContent = `Loaded ${file.name} — ${WORKORDERS.length} work orders`;
+        sourceLabel.textContent = `Data source: ${file.name}`;
+        renderPeriod();
+        renderAll(true);
+        menuDropdown.classList.remove('open');
+      } catch (err) {
+        importStatus.textContent = `Could not read file: ${err.message}`;
+      }
+    };
+    reader.onerror = () => { importStatus.textContent = 'Failed to read the selected file.'; };
+    reader.readAsArrayBuffer(file);
+    fileInput.value = '';
+  });
+
+  resetDataBtn.addEventListener('click', () => {
+    WORKORDERS = normalizeRows(RAW_SAMPLE_ROWS);
+    resetStateFilters();
+    document.getElementById('searchBox').value = '';
+    document.getElementById('dateFrom').value = '';
+    document.getElementById('dateTo').value = '';
+    importStatus.textContent = 'Loaded sample dataset — ' + WORKORDERS.length + ' work orders';
+    sourceLabel.textContent = 'Data source: CM_workorder_Raw_data.xlsx (sample)';
+    renderPeriod();
+    renderAll(true);
+    menuDropdown.classList.remove('open');
+  });
+
+  // ================= Live Google Sheet sync =================
+  const syncSheetBtn = document.getElementById('syncSheetBtn');
+
+  function sheetConfigured(){
+    return !!CONFIG.GOOGLE_SHEET_API_URL && CONFIG.GOOGLE_SHEET_API_URL.indexOf('PASTE_YOUR') !== 0;
+  }
+
+  async function loadFromGoogleSheet(isInitialLoad){
+    if (!sheetConfigured()){
+      if (!isInitialLoad) importStatus.textContent = 'No Google Sheet URL configured yet.';
+      return false;
+    }
+    importStatus.textContent = 'Syncing from Google Sheet…';
+    try {
+      const res = await fetch(CONFIG.GOOGLE_SHEET_API_URL, { method: 'GET', cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const rows = await res.json();
+      const normalized = normalizeRows(rows);
+      if (!normalized.length) throw new Error('Sheet returned no valid work order rows');
+      WORKORDERS = normalized;
+      resetStateFilters();
+      document.getElementById('searchBox').value = '';
+      document.getElementById('dateFrom').value = '';
+      document.getElementById('dateTo').value = '';
+      importStatus.textContent = `Synced ${WORKORDERS.length} work orders from Google Sheet`;
+      sourceLabel.textContent = 'Data source: Google Sheet (live)';
+      renderPeriod();
+      renderAll(true);
+      menuDropdown.classList.remove('open');
+      return true;
+    } catch (err) {
+      importStatus.textContent = `Could not sync Google Sheet: ${err.message}`;
+      return false;
+    }
+  }
+
+  syncSheetBtn.addEventListener('click', () => loadFromGoogleSheet(false));
+
+  // ================= Init =================
+  (async function init(){
+    const synced = sheetConfigured() ? await loadFromGoogleSheet(true) : false;
+    if (!synced){
+      importStatus.textContent = 'Loaded sample dataset — ' + WORKORDERS.length + ' work orders';
+      renderPeriod();
+      renderAll(true);
+    }
+    document.getElementById('genDate').textContent = 'Generated ' + new Date().toLocaleDateString('en-US', {year:'numeric', month:'long', day:'numeric'});
+  })();
+
+  if (window.matchMedia){
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (!document.documentElement.getAttribute('data-theme')) renderAll(false);
+    });
+  }
+})();
+</script>
+</body>
+</html>
